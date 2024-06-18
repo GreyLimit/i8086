@@ -6,7 +6,7 @@ Support for 32-bit CPUs is an aspirational objective, but not aprimary requireme
 ## How did I get here?
 Having written (and sometimes) completed a number of assemblers for older CPUs the thought crossed my mind: Why not do an Intel 8086 assmbler, how hard can it be?
 
-The answer is that (strangely reaffirming my opinions formed "back in the day" when 286 PCs were the new thing), these CPUs are damn fiddly and complicated.  While the machine code *does* have some regularity within its definitions, it's not what I would call 'orthoganal' in the way other contemporary CPU were.  The net result is that where I have been able to capture a functional assembler for other processors in a single managebly sized source file, for this CPU (and relatives) it has required a more complex approach spanning approximately 25 source files.
+The answer is that (strangely reaffirming my opinions formed "back in the day" when 286 PCs were the new thing), these CPUs are damn fiddly and complicated.  While the machine code *does* have some regularity within its definitions, it's not what I would call 'orthogonal' in the way other contemporary CPU were.  The net result is that where I have been able to capture a functional assembler for other processors in a single managebly sized source file, for this CPU (and relatives) it has required a more complex approach spanning approximately 25 source files.
 
 And it's still not finished.
 
