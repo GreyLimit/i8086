@@ -343,8 +343,8 @@ opcode opcodes[] = {
  */
 /*C*/	{ op_adc,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_accumulators, ea_immediate },	4,	{ SB(0x14),IDS(0,SIGN_IGNORED),IMM(1),SDS(0,0) }},
 /*B*/	{ op_adc,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	5,	{ SB(0x80),IDS(0,SIGN_IGNORED),EAO(B010,0),IMM(1),SDS(0,0) }},
-/*A*/	{ op_adc,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	5,	{ SB(0x10),SDR(1,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0) }},
-/*A*/	{ op_adc,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	5,	{ SB(0x10),SDR(0,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0) }},
+/*A*/	{ op_adc,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	6,	{ SB(0x10),SDR(DIRECT_TO_REG,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0),VDS(1) }},
+/*A*/	{ op_adc,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	6,	{ SB(0x10),SDR(DIRECT_TO_EA,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0),VDS(0) }},
 
 /* Programming_the_8086_8088
  * Page 73
@@ -360,8 +360,8 @@ opcode opcodes[] = {
  */
 /*C*/	{ op_add,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_accumulators, ea_immediate },	4,	{ SB(0x04),IDS(0,SIGN_IGNORED),IMM(1),SDS(0,0) }},
 /*B*/	{ op_add,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	5,	{ SB(0x80),IDS(0,SIGN_IGNORED),EAO(B000,0),IMM(1),SDS(0,0) }},
-/*A*/	{ op_add,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	5,	{ SB(0x00),SDR(1,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0) }},
-/*A*/	{ op_add,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	5,	{ SB(0x00),SDR(0,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0) }},
+/*A*/	{ op_add,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	6,	{ SB(0x00),SDR(DIRECT_TO_REG,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0),VDS(1) }},
+/*A*/	{ op_add,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	6,	{ SB(0x00),SDR(DIRECT_TO_EA,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0),VDS(0) }},
 
 /* Programming_the_8086_8088
  * Pages 74,75
@@ -377,8 +377,8 @@ opcode opcodes[] = {
  */
 /*C*/	{ op_and,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_accumulators, ea_immediate },	4,	{ SB(0x24),IDS(0,SIGN_IGNORED),IMM(1),SDS(0,0) }},
 /*B*/	{ op_and,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	5,	{ SB(0x80),IDS(0,SIGN_IGNORED),EAO(B100,0),IMM(1),SDS(0,0) }},
-/*A*/	{ op_and,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	5,	{ SB(0x20),SDR(1,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0) }},
-/*A*/	{ op_and,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	5,	{ SB(0x20),SDR(0,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0) }},
+/*A*/	{ op_and,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	6,	{ SB(0x20),SDR(DIRECT_TO_REG,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0),VDS(1) }},
+/*A*/	{ op_and,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	6,	{ SB(0x20),SDR(DIRECT_TO_EA,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0),VDS(0) }},
 
 /* iAPX86_88_186_188_Programmers_Reference (1983)
  * Page 3-53,54
@@ -386,7 +386,7 @@ opcode opcodes[] = {
  *	Bound
  *	0110 0010, mod req r/m
  */
-	{ op_bound,	flag_186,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	4,	{ SB(0x20),SDR(1,0,1),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EA(0,1) }},
+	{ op_bound,	flag_186,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	4,	{ SB(0x20),SDR(DIRECT_TO_REG,0,1),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EA(0,1) }},
 
 /* Programming_the_8086_8088
  * Pages 76,77
@@ -404,13 +404,13 @@ opcode opcodes[] = {
  * D	1111 1111, mod 011 r/m
  */
 /*A*/	{ op_call,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_immediate, ea_empty },		4,	{ SB(0xE8),FDS(DATA_SIZE_NEAR,SIGN_UNSIGNED),VDS(0),REL(0,RANGE_WORD,0,0) }},
-/*B*/	{ op_call,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xFF),FDS(DATA_SIZE_NEAR,SIGN_UNSIGNED),VDS(0),EAO(B010,0) }},
+/*B*/	{ op_call,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0xFF),FDS(DATA_SIZE_NEAR,SIGN_UNSIGNED),VDS(0),EAO(B010,0) }},
 /*C*/	{ op_call,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_far_immediate, ea_empty },		4,	{ SB(0x9A),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),IMM(0) }},
 /*C*/	{ op_call,	flag_086|flag_abs,lock_n_segments,	far_modifier,	1,	{ ea_immediate, ea_empty },		4,	{ SB(0x9A),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),IMM(0) }},
 /*D*/	{ op_call,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_far_mod_reg_adrs, ea_empty },	4,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),EAO(B011,0) }},
-/*D*/	{ op_call,	flag_086|flag_abs,lock_n_segments,	far_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),EAO(B011,0) }},
+/*D*/	{ op_call,	flag_086|flag_abs,lock_n_segments,	far_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),EAO(B011,0) }},
 /*C*/	{ op_lcall,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_immediate, ea_empty },		4,	{ SB(0x9A),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),IMM(0) }},
-/*D*/	{ op_lcall,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),EAO(B011,0) }},
+/*D*/	{ op_lcall,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),VDS(0),EAO(B011,0) }},
 
 /* Programming_the_8086_8088
  * Page 78
@@ -466,8 +466,8 @@ opcode opcodes[] = {
  */
 /*C*/	{ op_cmp,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_accumulators, ea_immediate },	4,	{ SB(0x3C),IDS(0,SIGN_IGNORED),IMM(1),SDS(0,0) }},
 /*B*/	{ op_cmp,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	5,	{ SB(0x80),IDS(0,SIGN_IGNORED),EAO(B111,0),IMM(1),SDS(0,0) }},
-/*A*/	{ op_cmp,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	5,	{ SB(0x38),SDR(1,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0) }},
-/*A*/	{ op_cmp,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	5,	{ SB(0x38),SDR(0,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0) }},
+/*A*/	{ op_cmp,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	6,	{ SB(0x38),SDR(DIRECT_TO_REG,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0),VDS(1) }},
+/*A*/	{ op_cmp,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	6,	{ SB(0x38),SDR(DIRECT_TO_EA,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0),VDS(0) }},
 
 /* Programming_the_8086_8088
  * Page 84
@@ -754,11 +754,11 @@ opcode opcodes[] = {
 /*B*/	{ op_jmp,	flag_086,	no_prefix,		near_modifier,	1,	{ ea_immediate, ea_empty },		2,	{ SB(0xEB),REL(0,RANGE_BOTH,0,1) }},
 /*D*/	{ op_jmp,	flag_086|flag_abs,no_prefix,		no_modifier,	1,	{ ea_far_immediate, ea_empty },		3,	{ SB(0xEA),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),IMM(0) }},
 /*D*/	{ op_jmp,	flag_086|flag_abs,no_prefix,		far_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xEA),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),IMM(0) }},
-/*C*/	{ op_jmp,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		3,	{ SB(0xFF),FDS(DATA_SIZE_NEAR,SIGN_UNSIGNED),EAO(B100,0) }},
+/*C*/	{ op_jmp,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		3,	{ SB(0xFF),FDS(DATA_SIZE_NEAR,SIGN_UNSIGNED),EAO(B100,0) }},
 /*E*/	{ op_jmp,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_far_mod_reg_adrs, ea_empty },	3,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),EAO(B101,0) }},
-/*E*/	{ op_jmp,	flag_086|flag_abs,lock_n_segments,	far_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		3,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),EAO(B101,0) }},
+/*E*/	{ op_jmp,	flag_086|flag_abs,lock_n_segments,	far_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		3,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),EAO(B101,0) }},
 /*D*/	{ op_ljmp,	flag_086|flag_abs,no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xEA),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),IMM(0) }},
-/*E*/	{ op_ljmp,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		3,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),EAO(B101,0) }},
+/*E*/	{ op_ljmp,	flag_086|flag_abs,lock_n_segments,	no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		3,	{ SB(0xFF),FDS(DATA_SIZE_FAR,SIGN_UNSIGNED),EAO(B101,0) }},
 
 
 /* Programming_the_8086_8088
@@ -937,11 +937,11 @@ opcode opcodes[] = {
 /*B*/	{ op_mov,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	5,	{ SB(0xC6),IDS(0,SIGN_IGNORED),EAO(B000,0),IMM(1),SDS(0,0) }},
 /*D*/	{ op_mov,	flag_086,	no_prefix,		no_modifier,	2,	{ ea_accumulators, ea_indirect },	4,	{ SB(0xA0),IDS(0,SIGN_IGNORED),IMM(1),SDS(0,0) }},
 /*E*/	{ op_mov,	flag_086,	no_prefix,		no_modifier,	2,	{ ea_indirect, ea_accumulators },	4,	{ SB(0xA0),IDS(1,SIGN_IGNORED),IMM(0),SDS(0,0) }},
-/*A*/	{ op_mov,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	5,	{ SB(0x88),SDR(1,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0) }},
-/*A*/	{ op_mov,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	5,	{ SB(0x88),SDR(0,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0) }},
+/*A*/	{ op_mov,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	6,	{ SB(0x88),SDR(DIRECT_TO_REG,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0),VDS(1) }},
+/*A*/	{ op_mov,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	6,	{ SB(0x88),SDR(DIRECT_TO_EA,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0),VDS(0) }},
 /*F*/	{ op_mov,	flag_086|flag_abs,lock_n_segments,	no_modifier,	2,	{ ea_segment_reg, ea_mod_wreg_adrs },	3,	{ SB(0x8E),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),EA(0,1) }},
 /*G*/	{ op_mov,	flag_086|flag_abs,lock_n_segments,	no_modifier,	2,	{ ea_mod_wreg_adrs, ea_segment_reg },	3,	{ SB(0x8C),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),EA(1,0) }},
-	
+
 
 
 

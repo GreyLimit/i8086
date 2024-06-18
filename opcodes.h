@@ -157,6 +157,8 @@ extern opcode_prefix map_segment_prefix( byte segment_reg );
  *	Register Indirect Mode:
  *	-----------------------
  *
+ *	Also called "Pointer Mode" in the assembler source.
+ *
  *	The effective address is in one of the 'indirect' registers
  *	SI, DI or BX.
  *
@@ -200,44 +202,27 @@ extern opcode_prefix map_segment_prefix( byte segment_reg );
  *	-------------
  *
  *	In this type of addressing mode the effective
-	address is sum of index register and displacement:
-
-		MOV AX, [SI+2000]
-		MOV AL, [DI+3000]
-
-
-	Based mode – In this the effective address is the sum of base
-	register and displacement:
-
-		MOV AL, [BP+ 0100]
-
-	Based indexed displacement mode – In this type of addressing
-	mode the effective address is the sum of index register, base
-	register and displacement:
-
-		MOV AL, [SI+BP+2000]
-
-	String mode – This addressing mode is related to string
-	instructions. In this the value of SI and DI are auto
-	incremented and decremented depending upon the value of
-	directional flag:
-
-		MOVS B
-		MOVS W
-
-	Input/Output mode – This addressing mode is related with input
-	output operations:
-
-		IN A, 45
-		OUT A, 50
-
-	Relative mode – In this the effective address is calculated with
-	reference to instruction pointer:
-
-		JNZ 8 bit address
-		IP=IP+8 bit address
-
+ *	address is sum of index register and displacement:
  *
+ *		MOV AX, [SI+2000]
+ *		MOV AL, [DI+3000]
+ *
+ *	Base Mode:
+ *	----------
+ * 
+ *	Based mode – In this the effective address is the sum of base
+ *	register and displacement:
+ *
+ *		MOV AL, [BP+0100]
+ *
+ *	Base Indexed Mode:
+ *	------------------
+ * 
+ *	Based indexed displacement mode – In this type of addressing
+ *	mode the effective address is the sum of index register, base
+ *	register and displacement:
+ *
+ *		MOV AL, [SI+BP+2000]
  */
 
 /*
@@ -416,19 +401,61 @@ typedef struct _opcode {
 
 /*
  *	The encoding of the instruction is captured as a series of
- *	'instruction' words which combine an instruction code (the
- *	ACTion) and one or more arguments to that instruction.
+ *	16-bit 'instruction' words which combine an instruction code
+ *	(the ACTion) and one or more arguments to that instruction.
  */
 
 /*
- *	Handling of the high level action codes, the ACTions.  These
- *	are limited to 4 bits occupying the top four bits of the
+ *	Encoding of the high level action codes: the ACTions.  These
+ *	are fixed to 4 bits occupying the top four bits of the
  *	encoded word value.
  */
 #define ACT_LSB		12
 #define ACT_BITS	4
 #define ACT(n)		VALUE((n),ACT_BITS,ACT_LSB)
 #define GET_ACT(w)	EXTRACT((w),ACT_BITS,ACT_LSB)
+
+/*
+ *	Across the actions are a number of specific constant values
+ *	with associated meanings.  The following macros assign symbols
+ *	to these values (hopefully) reducing the opportunity for coding
+ *	errors in the opcode table.
+ */
+ 
+/*
+ *	Actions where the signed status of a numerical value is pertinent
+ *	will use one of these values to enumerate the appropiate
+ *	interpretation (contributes towards range checking and error
+ *	detection)
+ */
+#define SIGN_IGNORED	0
+#define SIGN_UNSIGNED	1
+#define SIGN_SIGNED	2
+
+/*
+ *	Actions where the data size is pertinent will use one of these
+ *	values to capture the appropiate data sizing requirement.
+ */
+#define DATA_SIZE_BYTE	0
+#define DATA_SIZE_WORD	1
+#define DATA_SIZE_NEAR	2
+#define DATA_SIZE_FAR	3
+
+/*
+ *	Relative ranching instructions can be found using byte, word or
+ *	*both* options (depending on the instruction), use as appropiate.
+ */
+#define RANGE_BYTE	1
+#define RANGE_WORD	2
+#define RANGE_BOTH	3
+
+/*
+ *	Instructions with two arguments (eg 'mov') need to explicitly
+ *	have the direction of data movement specified.  These values
+ *	serve that role.
+ */
+#define DIRECT_TO_EA	0
+#define DIRECT_TO_REG	1
 
 /*
  *	Set Byte (Action 0)
@@ -444,34 +471,6 @@ typedef struct _opcode {
 
 #define SB(v)		(ACT(SB_ACT)|VALUE((v),SB_VALUE_BITS,SB_VALUE_LSB))
 #define SB_VALUE(w)	EXTRACT((w),SB_VALUE_BITS,SB_VALUE_LSB)
-
-/*
- *	Define signed values for these macros.
- */
-#define SIGN_IGNORED	0
-#define SIGN_UNSIGNED	1
-#define SIGN_SIGNED	2
-
-/*
- *	Define sizing values for these macros.
- */
-#define DATA_SIZE_BYTE	0
-#define DATA_SIZE_WORD	1
-#define DATA_SIZE_NEAR	2
-#define DATA_SIZE_FAR	3
-
-/*
- *	Define range values for these macros.
- */
-#define RANGE_BYTE	1
-#define RANGE_WORD	2
-#define RANGE_BOTH	3
-
-/*
- *	Define direction values for these macros.
- */
-#define DIRECT_TO_EA	0
-#define DIRECT_TO_REG	1
 
 /*
  *	Identify Data Size (Action 1)
@@ -603,8 +602,9 @@ typedef struct _opcode {
  *	Set data direction providing a byte index and 'bit in byte'
  *	position where a 0 (EA is Destination) or 1 (EA is Source).
  *
- *	SDR(d,i,b)	d = direction,	0 = Reg->Source, EA->Destination
- *					1 = EA->Source, Reg->Destination
+ *	SDR(d,i,b)	d = direction bit
+ *				0 = EA<-Reg (Reg->Source, EA->Destination)
+ *				1 = Reg<-EA (EA->Source, Reg->Destination)
  *			i = index into machine instruction (0..7)
  *			b = bit number in byte (0..7)
  */

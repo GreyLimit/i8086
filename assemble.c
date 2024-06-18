@@ -80,6 +80,12 @@ static void set_sign_flags( instruction *mc, byte sign ) {
 			break;
 		}
 	}
+	/*
+	 *	Simpler coding option (but less easy when debugging).
+	 *
+	 *	mc->unsigned_data = ( sign == SIGN_UNSIGNED );
+	 *	mc->signed_data = ( sign == SIGN_SIGNED );
+	 */
 }
 
 /*
@@ -116,7 +122,7 @@ static boolean encode_ea( instruction *mc, ea_breakdown *reg, byte op_code, ea_b
 	 * 						110:	DH	SI
 	 * 						111:	BH	DI
 	 *
-	 * 				rrr: Gets replaced by an 'opcode' when the EA is the target
+	 * 				rrr:	Gets replaced by an 'opcode' when the EA is the target
 	 *					of an operation with an immediate value.
 	 *
 	 *				aaa: EAdrs		m=00	m=01	m=10	m=11
@@ -336,13 +342,14 @@ static boolean encode_ids( instruction *mc, ea_breakdown *arg ) {
 	DPRINT(( "\n" ));
 
 	if( BOOL( arg->ea & ea_all_reg )) {
+		
 		ASSERT( arg->registers == 1 );
 
 		DPRINT(( "Register components" ));
 		DCODE( show_ac_bitmap( arg->reg[ 0 ]->ac ));
 		DPRINT(( "\n" ));
 
-		if( arg->mod ) {
+		if( arg->mod != no_modifier ) {
 			log_error( "Register sizes cannot be modified" );
 			return( FALSE );
 		}
@@ -374,7 +381,12 @@ static boolean encode_rel( instruction *mc, constant_value *v, byte w, byte i, b
 	ASSERT( w != 0 );
 	ASSERT( this_pass != no_pass );
 
-	if( this_pass == pass_label_gathering ) {
+#ifdef VERIFICATION
+	if(( this_pass == pass_label_gathering )||( this_pass == data_verification ))
+#else
+	if( this_pass == pass_label_gathering )
+#endif
+	{
 		/*
 		 *	In the label gathering pass we will assert an
 		 *	displacement of 0 (zero).  This is because it
@@ -512,6 +524,16 @@ static boolean encode_imm( instruction *mc, constant_value *v ) {
 		ASSERT( !mc->near_data );
 		
 		ASSERT(( mc->coded + sizeof( dword )) <= MAX_CODE_BYTES );
+		
+#ifdef VERIFICATION
+		if( this_pass == data_verification ) {
+			mc->code[ mc->coded++ ] = L( v->value );
+			mc->code[ mc->coded++ ] = H( v->value );
+			mc->code[ mc->coded++ ] = 0;
+			mc->code[ mc->coded++ ] = 0;
+			return( TRUE );
+		}
+#endif
 
 		if( this_pass == pass_label_gathering ) {
 			/*
@@ -566,6 +588,14 @@ static boolean encode_imm( instruction *mc, constant_value *v ) {
 		
 		ASSERT(( mc->coded + sizeof( word )) <= MAX_CODE_BYTES );
 		
+#ifdef VERIFICATION
+		if( this_pass == data_verification ) {
+			mc->code[ mc->coded++ ] = L( v->value );
+			mc->code[ mc->coded++ ] = H( v->value );
+			return( TRUE );
+		}
+#endif
+
 		if( this_pass == pass_label_gathering ) {
 			/*
 			 *	In this pass there will be times that the
@@ -604,6 +634,15 @@ static boolean encode_imm( instruction *mc, constant_value *v ) {
 		/*
 		 *	Word sized immediate
 		 */
+
+#ifdef VERIFICATION
+		if( this_pass == data_verification ) {
+			mc->code[ mc->coded++ ] = L( v->value );
+			mc->code[ mc->coded++ ] = H( v->value );
+			return( TRUE );
+		}
+#endif
+
 		if( !BOOL( v->scope & scope_address )) {
 			if( mc->signed_data && !BOOL( v->scope & scope_sword )) {
 				log_error( "Immediate value out of range (signed word)." );
@@ -632,6 +671,13 @@ static boolean encode_imm( instruction *mc, constant_value *v ) {
 	 */
 	ASSERT( mc->byte_data );
 	
+#ifdef VERIFICATION
+	if( this_pass == data_verification ) {
+		mc->code[ mc->coded++ ] = v->value;
+		return( TRUE );
+	}
+#endif
+
 	if( mc->signed_data && !BOOL( v->scope & scope_sbyte )) {
 		log_error( "Immediate value out of range (signed byte)." );
 		return( FALSE );
@@ -716,9 +762,9 @@ static boolean perform_vds( instruction *mc, ea_breakdown *arg ) {
 			return( mc->far_data );
 		}
 		default: {
-			DPRINT( "Unrecognised EA" );
+			DPRINT(( "Unrecognised EA" ));
 			DCODE( show_ea_bitmap( arg->ea ));
-			DPRINT( "\n" );
+			DPRINT(( "\n" ));
 			ABORT( "Programmer error" );
 			break;
 		}
@@ -747,6 +793,7 @@ boolean assemble_inst( opcode *inst, opcode_prefix prefs, ea_breakdown *arg, ins
 
 	ASSERT( inst != NIL( opcode ));
 	ASSERT( arg != NIL( ea_breakdown ));
+	
 	DPRINT(( "Assemble op '%s (%d args)", component_text( inst->op ), inst->args ));
 	DCODE( for( int a = 0; a < inst->args; a++ ) show_ea_bitmap( inst->arg[ a ] ));
 	DPRINT(( "'\n" ));
@@ -780,7 +827,17 @@ boolean assemble_inst( opcode *inst, opcode_prefix prefs, ea_breakdown *arg, ins
 		e = inst->encode[ i ];
 		switch( GET_ACT( e )) {
 			case SB_ACT: {
+				/*
+				 *	Set Byte
+				 *
+				 *	Provide static data forming the basic for the machine
+				 *	code instruction.
+				 *
+				 *	SB(v)		v = value to add to instruction
+				 */
+
 				ASSERT( mc->coded < MAX_CODE_BYTES );
+
 				DPRINT(( "Set Byte %d -> %0X\n", mc->coded, SB_VALUE( e )));
 
 				mc->code[ mc->coded++ ] = SB_VALUE( e );
@@ -815,6 +872,18 @@ boolean assemble_inst( opcode *inst, opcode_prefix prefs, ea_breakdown *arg, ins
 				break;
 			}
 			case IDS_ACT: {
+				/*
+				 *	Identify Data Size.
+				 *
+				 *	Determine, from the indicated argument, the size of the
+				 *	data to be handled (byte or word).
+				 *
+				 *	IDS(a,g)	a = Argument Number
+				 *			g = Sign,	0:Ignore
+				 *					1:Unsigned
+				 *					2:Signed
+				 */
+				 
 				ASSERT( IDS_ARG( e ) < inst->args );
 				
 				DPRINT(( "Identify Data Size (arg %d).\n", IDS_ARG( e )));
@@ -926,10 +995,21 @@ boolean assemble_inst( opcode *inst, opcode_prefix prefs, ea_breakdown *arg, ins
 
 				v = &( arg[ ESC_ARG( e )].immediate_arg );
 
+#ifdef VERIFICATION
+				/*
+				 *	If, and ONLY if, we are in data verification mode
+				 *	then we will explicitly round off any supplied
+				 *	immediate value to be in the "correct range" and
+				 *	so ensure the range check passes.
+				 */
+				if( this_pass == data_verification ) v->value &= 0x3F;
+#endif
+
 				if(( v->value < 0 )||( v->value > 63 )) {
 					log_error_i( "Co-processor opcode out of range", v->value );
 					return( FALSE );
 				}
+
 				DPRINT(( "Co-processor opcode = %d\n", v->value ));
 
 				mc->code[ 0 ] |= ( v->value >> 3 ) & 7;		/* High order bits in first byte */
@@ -951,10 +1031,24 @@ boolean assemble_inst( opcode *inst, opcode_prefix prefs, ea_breakdown *arg, ins
 			}
 			case VDS_ACT: {
 				ASSERT( VDS_ARG( e ) < inst->args );
+				
 				DPRINT(( "Verify data size (arg %d).\n", VDS_ARG( e )+1 ));
 				
 				if( !perform_vds( mc, &( arg[ VDS_ARG( e )]))) {
-					log_error_i( "Argument incompatible with data size", VDS_ARG( e )+1 );
+
+#ifdef VERIFICATION
+					/*
+					 *	The error is only conditional if VERIFICATION has
+					 *	been compiled in and *and* we are outputting table
+					 *	verification data.
+					 */
+					if( this_pass != data_verification )
+#endif
+
+						/*
+						 *	Error being (optionally) conditionally generated.
+						 */
+						log_error_i( "Argument incompatible with data size", VDS_ARG( e )+1 );
 					return( FALSE );
 				}
 				break;
@@ -1056,7 +1150,7 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 	 * 	Also note that the line of tokens has an 'end_of_line'
 	 *	token at the end of it.  This means that all argument
 	 *	tokens always have a valid next pointer, even if (as
-	 *	with the last token in an argujment) it points to a
+	 *	with the last token in an argument) it points to a
 	 *	token outside the argument being examined.
 	 */
 	format = STACK_ARRAY( ea_breakdown, args+1 );
@@ -1160,6 +1254,7 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 			}
 			else {
 				if(( rd = register_component( look->id ))) {
+
 					DPRINT(( "Recognised register '%s'\n", component_text( look->id )));
 					DPRINT(( "Register components" ));
 					DCODE( show_ac_bitmap( rd->ac ));
@@ -1169,7 +1264,9 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 					 *	Before going full on adding a register lets see if this
 					 *	is a segment override definition (look for the colon).
 					 */
+ 
 					ASSERT( look->next != NIL( token_record ));
+
 					if( BOOL( rd->ac & ac_segment_reg ) && ( look->next->id == tok_colon )) {
 						if( BOOL( fill->ea & ac_seg_override )) {
 							log_error( "Multiple segments specified" );
@@ -1197,6 +1294,7 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 					}
 				}
 				else if(( look->id == tok_label )&&( look->var.label->type == class_segment )) {
+
 					DPRINT(( "SEGMENT identifier\n" ));
 
 					if( BOOL( fill->ea & ac_seg_override )) {
@@ -1217,6 +1315,7 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 				else {
 					int		used;
 					constant_value	val;
+
 					/*
 					 *	At this point we (probably) should have
 					 *	an expression of some sort.
@@ -1225,6 +1324,7 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 						log_error( "Error detected in constant expression" );
 						return( FALSE );
 					}
+
 					DPRINT(( "EXPRESSION identified\n" ));
 
 					look = index_token( look, used );
@@ -1239,9 +1339,11 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 				}
 			}
 		}
+
 		DPRINT(( "Arg %d =", a ));
 		DCODE( show_ac_bitmap( ac ));
 		DPRINT(( "\n" ));
+
 		/*
 		 *	Convert to a proper EA value.
 		 */
@@ -1255,6 +1357,7 @@ boolean process_opcode( opcode_prefix prefs, modifier mods, component op, int ar
 		a++;
 		fill++;
 	}
+
 	/*
 	 *	So .. at this point we have gathered everything together
 	 *	all the bits and pieces which will allow us to identify

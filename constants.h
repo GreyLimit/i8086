@@ -52,6 +52,11 @@
  */
 #define EVAL_STACK		8
 
+/*
+ *	Define the width of the space set asside for
+ *	the hexadecimal machine dump.
+ */
+#define HEX_DUMP_COLS		15
 
 #endif
 

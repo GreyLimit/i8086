@@ -22,6 +22,19 @@
 #define WORD_REGISTERS		8
 
 /*
+ *	Number of registers which can be used to directly reference
+ *	into memory without displacements or base registers.  This is
+ *	an 'odd' number due to the way EAs are encoded.
+ */
+#define POINTER_REGISTERS	3
+
+/*
+ *	Number of base and index registers used in EAs.
+ */
+#define BASE_REGISTERS		2
+#define INDEX_REGISTERS		2
+
+/*
  *	Provide simple value names for the segment register numbers as
  *	well as values representing situations where either a segment
  *	register has not been identified yet (UNKNOWN_SEG) or where a

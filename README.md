@@ -10,10 +10,12 @@ The answer is that (strangely reaffirming my opinions formed "back in the day" w
 
 And it's still not finished.
 
-## Where is here?
+## Where is here (June '24)?
 
 Within the limits of the x86 instructions so far encoded the assembler can *directly* generate DOS '.COM' executables (and by inference CP/M86 executables):  "Hello World!" has been written and executed.
 
 Support for object file creation (as input to a separate linker) has not been coded.
 
-June '24.
+Ongoing work on the '--dump-opcodes' option (enabled when compiled with VERIFICATION defined) has highlighted a range of errors thus proving how worth while this coding effort has been.
+
+As a by product it is possible to display all of the instructions which the assembler will recognise .. it's a long list.

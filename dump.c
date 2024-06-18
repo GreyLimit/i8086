@@ -18,12 +18,6 @@
  *	assembler in normal use.
  */
 
-/*
- *	Define the width of the space set asside for
- *	the hexadecimal machine dump.
- */
-#define HEX_DUMP_COLS	15
-
 static const char *display_sign( word v ) {
 	switch( v ) {
 		case SIGN_IGNORED:	return( "ignore" );
@@ -321,7 +315,16 @@ static component byte_register[ BYTE_REGISTERS ] = {
 static component word_register[ WORD_REGISTERS ] = {
 	reg_ax, reg_cx, reg_dx, reg_bx, reg_sp, reg_bp, reg_si, reg_di
 };
-static component seg_register[ SEGMENT_REGISTERS ] = {
+static component pointer_register[ POINTER_REGISTERS ] = {
+	reg_bx, reg_si, reg_di
+};
+static component base_register[ BASE_REGISTERS ] = {
+	reg_bx, reg_bp
+};
+static component index_register[ INDEX_REGISTERS ] = {
+	reg_si, reg_di
+};
+static component segment_register[ SEGMENT_REGISTERS ] = {
 	reg_cs, reg_ds, reg_ss, reg_es
 };
 
@@ -352,7 +355,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 			switch( state->pick ) {
 				case ea_byte_acc: {
 					if( state->step == 0 ) {
-						target->ea = ea_byte_acc;
+						target->ea = state->pick;
 						target->mod = no_modifier;
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( byte_register[ state->step ]);
@@ -368,7 +371,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				case ea_byte_reg: {
 					state->step++;	/* pre-inc to force step over accumulator */
 					if( state->step < BYTE_REGISTERS ) {
-						target->ea = ea_byte_reg;
+						target->ea = state->pick;
 						target->mod = no_modifier;
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( byte_register[ state->step ]);
@@ -382,7 +385,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				}
 				case ea_word_acc: {
 					if( state->step == 0 ) {
-						target->ea = ea_word_acc;
+						target->ea = state->pick;
 						target->mod = no_modifier;
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( word_register[ state->step ]);
@@ -398,7 +401,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				case ea_word_reg: {
 					state->step++;	/* pre-inc to force step over accumulator */
 					if( state->step < WORD_REGISTERS ) {
-						target->ea = ea_word_reg;
+						target->ea = state->pick;
 						target->mod = no_modifier;
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( word_register[ state->step ]);
@@ -410,54 +413,156 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 					}
 					break;
 				}
-				case ea_immediate: {
+				case ea_immediate:
+				case ea_far_immediate: {
+					switch( state->step ) {
+						case 0: {
+							target->ea = state->pick;
+							target->mod = no_modifier;
+							target->registers = 0;
+							target->segment_override = UNKNOWN_SEG;
+							target->immediate_arg.value = 0x55;
+							target->immediate_arg.scope = scope_byte;
+							target->immediate_arg.segment = NIL( segment_record );
+							state->step++;
+							return( TRUE );
+						}
+						case 1: {
+							target->ea = state->pick;
+							target->mod = no_modifier;
+							target->registers = 0;
+							target->segment_override = UNKNOWN_SEG;
+							target->immediate_arg.value = 0x5555;
+							target->immediate_arg.scope = scope_word;
+							target->immediate_arg.segment = NIL( segment_record );
+							state->step++;
+							return( TRUE );
+						}
+						default: {
+							break;
+						}
+					}
+					break;
+				}
+				case ea_indirect:
+				case ea_far_indirect: {
 					if( state->step == 0 ) {
-						target->ea = ea_immediate;
+						target->ea = state->pick;
 						target->mod = no_modifier;
 						target->registers = 0;
 						target->segment_override = UNKNOWN_SEG;
-						target->immediate_arg.value = 0x55;
-						target->immediate_arg.scope = scope_byte;
+						target->immediate_arg.value = 0xAAAA;
+						target->immediate_arg.scope = scope_word;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
 					}
 					break;
 				}
-				case ea_indirect: {
+				case ea_pointer_reg:
+				case ea_far_pointer_reg: {
+					if( state->step < POINTER_REGISTERS ) {
+						target->ea = state->pick;
+						target->mod = no_modifier;
+						target->registers = 1;
+						target->reg[ 0 ] = register_component( pointer_register[ state->step ]);
+						target->segment_override = UNKNOWN_SEG;
+						target->immediate_arg.value = 0;
+						target->immediate_arg.scope = scope_word;
+						target->immediate_arg.segment = NIL( segment_record );
+						state->step++;
+						return( TRUE );
+					}
 					break;
 				}
-				case ea_pointer_reg: {
+				case ea_base_disp:
+				case ea_far_base_disp: {
+					boolean	iw;
+					int	br;
+
+					iw = BOOL( state->step & 1 );
+					br = state->step >> 1;
+					while( br < BASE_REGISTERS ) {
+						target->ea = state->pick;
+						target->mod = no_modifier;
+						target->registers = 1;
+						target->reg[ 0 ] = register_component( base_register[ br ]);
+						target->segment_override = UNKNOWN_SEG;
+						target->immediate_arg.value = iw? 0xAAAA: 0xAA;
+						target->immediate_arg.scope = iw? scope_word: scope_byte;
+						target->immediate_arg.segment = NIL( segment_record );
+						state->step++;
+						return( TRUE );
+					}
 					break;
 				}
-				case ea_base_disp: {
+				case ea_index_disp:
+				case ea_far_index_disp: {
+					boolean	iw;
+					int	ir;
+
+					iw = BOOL( state->step & 1 );
+					ir = state->step >> 1;
+					while( ir < INDEX_REGISTERS ) {
+						target->ea = state->pick;
+						target->mod = no_modifier;
+						target->registers = 1;
+						target->reg[ 0 ] = register_component( index_register[ ir ]);
+						target->segment_override = UNKNOWN_SEG;
+						target->immediate_arg.value = iw? 0xAAAA: 0xAA;
+						target->immediate_arg.scope = iw? scope_word: scope_byte;
+						target->immediate_arg.segment = NIL( segment_record );
+						state->step++;
+						return( TRUE );
+					}
 					break;
 				}
-				case ea_index_disp: {
-					break;
-				}
-				case ea_base_index_disp: {
+				case ea_base_index_disp:
+				case ea_far_base_index_disp: {
+					boolean	iw;
+					int	br,
+						ir;
+
+
+					/*
+					 *	Break out the three value
+					 *	from the step value.  We
+					 *	use 'ir' as the temp variable
+					 *	so it can be used as the
+					 *	control to end this code.
+					 */
+					ir = state->step;
+					iw = BOOL( ir & 1 );		ir >>= 1;
+					br = ir % BASE_REGISTERS;	ir /= BASE_REGISTERS;
+
+					while( ir < INDEX_REGISTERS ) {
+						target->ea = state->pick;
+						target->mod = no_modifier;
+						target->registers = 2;
+						target->reg[ 0 ] = register_component( base_register[ br ]);
+						target->reg[ 1 ] = register_component( index_register[ ir ]);
+						target->segment_override = UNKNOWN_SEG;
+						target->immediate_arg.value = iw? 0xAAAA: 0xAA;
+						target->immediate_arg.scope = iw? scope_word: scope_byte;
+						target->immediate_arg.segment = NIL( segment_record );
+						state->step++;
+						return( TRUE );
+					}
 					break;
 				}
 				case ea_segment_reg: {
-					break;
-				}
-				case ea_far_immediate: {
-					break;
-				}
-				case ea_far_indirect: {
-					break;
-				}
-				case ea_far_pointer_reg: {
-					break;
-				}
-				case ea_far_base_disp: {
-					break;
-				}
-				case ea_far_index_disp: {
-					break;
-				}
-				case ea_far_base_index_disp: {
+					if( state->step < SEGMENT_REGISTERS ) {
+						target->ea = state->pick;
+						target->mod = no_modifier;
+						target->registers = 1;
+						target->reg[ 0 ] = register_component( segment_register[ state->step ]);
+						target->segment_override = UNKNOWN_SEG;
+						target->immediate_arg.value = 0;
+						target->immediate_arg.scope = scope_word;
+						target->immediate_arg.segment = NIL( segment_record );
+						state->step++;
+						return( TRUE );
+					}
 					break;
 				}
 				default: {
@@ -520,6 +625,18 @@ void dump_opcode_list( boolean show_more ) {
 				break;
 			}
 			case 2: {
+				ea_state	foreach_1,
+						foreach_2;
+				
+				if( init_ea_state( &foreach_1, op->arg[ 0 ])) {
+					while( next_ea_state( &foreach_1, &( arg[ 0 ]))) {
+						if( init_ea_state( &foreach_2, op->arg[ 1 ])) {
+							while( next_ea_state( &foreach_2, &( arg[ 1 ]))) {
+								if( assemble_inst( op, no_prefix, arg, &mc )) display_instruction( show_more, opflags, mods, op, arg, &mc );
+							}
+						}
+					}
+				}
 				break;
 			}
 			default: {

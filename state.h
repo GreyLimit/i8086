@@ -16,6 +16,12 @@
  */
 typedef enum {
 	no_pass = 0,					/* The default start position for the program. */
+
+#ifdef VERIFICATION
+	data_verification,				/* Routines being called as part of a table */
+							/* generation, debug and testing process. */
+#endif
+
 	pass_label_gathering,				/* Key phase for name/label gathering */
 	pass_value_confirmation,			/* Label value and position confirmation (repeatable) */
 	pass_code_generation				/* Output file generation (repeatable) */

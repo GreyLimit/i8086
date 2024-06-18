@@ -59,6 +59,11 @@ assembler_phase this_pass = no_pass;
  *			placed into memory.
  */
 boolean reset_state( void ) {
+	
+#ifdef VERIFICATION
+	ASSERT( this_pass != data_verification );
+#endif
+
 	/*
 	 *	The mandatory new pass actions:
 	 */

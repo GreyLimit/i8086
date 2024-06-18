@@ -111,7 +111,7 @@ id_record *find_label( char *label, boolean definition ) {
  *	Dump the content of a constant value record, used
  *	as part of the verbose/debug output.
  */
-static void dump_value( constant_value *v ) {
+void dump_value( constant_value *v ) {
 
 #	define BUFFER_FOR_SCOPE 32
 

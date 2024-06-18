@@ -63,6 +63,12 @@ extern id_record *find_label( char *label, boolean definition );
  */
 extern void dump_labels( void );
 
+/*
+ *	Dump the content of a constant value record, used
+ *	as part of the verbose/debug output.
+ */
+extern void dump_value( constant_value *v );
+
 
 #endif
 

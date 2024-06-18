@@ -44,7 +44,10 @@
  * 	June 2024
  *
  * 		Source code broken into multiple modules, many, many
- *		modules.
+ *		modules.  As a consequence this main source code file
+ *		contains only that code required to handle program
+ *		arguments and a final call to the routine that assembles
+ *		a program file.
  */
 
 #include "os.h"
@@ -77,7 +80,7 @@ static struct {
 	{ "--access-segments",		"Permit assignment to segments",	allow_segment_access,	flag_seg	},
 	{ "--position-dependent",	"Permit fixed/absolute position code",	allow_position_dependent,flag_abs	},
 	{ "--help",			"Show this help",			show_help,		flag_none	},
-	
+
 #ifdef VERIFICATION
 	{ "--dump-opcodes",		"Dump internal opcode table",		dump_opcodes,		flag_none	},
 #endif
@@ -117,6 +120,10 @@ static boolean process_flags( int *argc, char *argv[] ) {
 
 #ifdef VERIFICATION
 	if( BOOL( command_flags & dump_opcodes )) {
+
+		ASSERT( this_pass == no_pass );
+		
+		this_pass = data_verification;
 		if( BOOL( command_flags & be_verbose )) {
 			dump_opcode_list( BOOL( command_flags & more_verbose ));
 		}
