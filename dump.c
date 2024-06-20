@@ -572,7 +572,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 			}
 		}
 		state->map &= ~state->pick;
-		state->pick <<= 1;		/* See? where just pushing the bit along */
+		state->pick <<= 1;		/* See? we're just pushing the bit along */
 		state->step = 0;
 	}
 	return( FALSE );

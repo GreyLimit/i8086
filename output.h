@@ -15,23 +15,11 @@
  *	selected.
  */
 typedef struct {
-	boolean	FUNC( open_file )( char *name );
-	void	FUNC( close_file )( void );
-	void	FUNC( output_data )( byte *data, int len );
-	void	FUNC( output_space )( int count );
+	boolean	FUNC( open_file )( FILE **file, boolean hex, char *name );
+	boolean	FUNC( close_file )( FILE *file, boolean hex );
+	boolean	FUNC( output_data )( FILE *file, boolean hex, byte *data, int len );
+	boolean	FUNC( output_space )( FILE *file, boolean hex, int count );
 } output_api;
-
-/*
- *	Flag that controls the output of the binary
- *	files as either raw binary data or cooked ASCII
- *	hexadecimal data dump.
- */
-extern boolean target_hex;
-
-/*
- *	The file handle where the output is being directed.
- */
-extern FILE *target_file;
 
 /*
  *	Generic Output API
@@ -42,18 +30,18 @@ extern FILE *target_file;
  */
 
 /*
+ *	The call to initialise the output API
+ */
+extern void initialise_output( output_api *api, boolean hex );
+
+/*
  *	We will default to the testing API for the moment so that
  *	the output remains clearly available.
- *
- *	TODO: Sort out the output selection and file open/close
- *	code.
  */
-extern output_api *target_api;
-
 extern boolean open_file( char *name );
-extern void close_file( void );
-extern void output_data( byte *data, int len );
-extern void output_space( int count );
+extern boolean close_file( void );
+extern boolean output_data( byte *data, int len );
+extern boolean output_space( int count );
 
 
 

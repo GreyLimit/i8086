@@ -1083,8 +1083,7 @@ static boolean generate_inst( instruction *mc ) {
 		if(( j = encode_prefix_bytes( mc->prefixes, ops, MAX_PREFIX_BYTES )) == ERROR ) return( FALSE );
 		fill = &( ops[ j ]);
 		for( i = 0; i < mc->coded; *fill++ = mc->code[ i++ ]);
-		output_data( ops, j + i );
-		return( TRUE );
+		return( output_data( ops, j + i ));
 	}
 	log_error( "No code generated" );
 	return( FALSE );

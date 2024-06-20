@@ -170,8 +170,7 @@ int main( int argc, char *argv[] ) {
 	 */
 	switch( command_flags & output_selection_mask ) {
 		case generate_dot_com: {
-			target_api = &com_output_api;
-			target_hex = BOOL( command_flags & generate_hex );
+			initialise_output( &com_output_api, BOOL( command_flags & generate_hex ));
 			break;
 		}
 		case generate_dot_exe: {
@@ -183,7 +182,7 @@ int main( int argc, char *argv[] ) {
 			return( 1 );
 		}
 		case generate_listing: {
-			target_api = &listing_output_api;
+			initialise_output( &listing_output_api, BOOL( command_flags & generate_hex ));
 			break;
 		}
 	}
@@ -204,7 +203,7 @@ int main( int argc, char *argv[] ) {
 		if( BOOL( command_flags & be_verbose )) printf( "Start PASS %d.\n", count );
 		if( !process_file( argv[ 1 ])) {
 			log_error( "Assembly terminated" );
-			close_file();
+			(void)close_file();
 			return( 1 );
 		}
 		if( BOOL( command_flags & be_verbose ) && ( this_pass == pass_value_confirmation )) dump_labels();
@@ -212,7 +211,10 @@ int main( int argc, char *argv[] ) {
 	/*
 	 *	If we get here we have succeeded.
 	 */
-	close_file();
+	if( !close_file()) {
+		log_error( "Unable to finalise output." );
+		return( 1 );
+	}
 	return( 0 );
 }
 

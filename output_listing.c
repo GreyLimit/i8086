@@ -13,20 +13,22 @@
  *	Listing Output API
  * 	==================
  */
-static boolean listing_api_openfile( char *name ) {
+static boolean listing_api_openfile( FILE **file, boolean hex, char *name ) {
 	return( TRUE );
 }
 
-static void listing_api_closefile( void ) {
+static boolean listing_api_closefile( FILE *file, boolean hex ) {
+	return( TRUE );
 }
 
-static void listing_api_output_data( byte *data, int len ) {
+static boolean listing_api_output_data( FILE *file, boolean hex, byte *data, int len ) {
 	printf( "%04x", this_segment->posn );
 	while( len-- ) printf( " %02x", (unsigned int)( *data++ ));
 	printf( "\n" );
+	return( TRUE );
 }
 
-static void listing_api_output_space( int count ) {
+static boolean listing_api_output_space( FILE *file, boolean hex, int count ) {
 	if( count > 0 ) {
 		word	here;
 		int	i;
@@ -42,6 +44,7 @@ static void listing_api_output_space( int count ) {
 		}
 		printf( "\n" );
 	}
+	return( TRUE );
 }
 
 

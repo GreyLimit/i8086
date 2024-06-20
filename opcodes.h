@@ -83,6 +83,7 @@ typedef enum {
 	rep_test_prefix		= ( rep_eq_prefix | rep_ne_prefix ),
 	segment_prefixes	= ( CS_prefix | DS_prefix | SS_prefix | ES_prefix ),
 	lock_n_segments		= ( lock_prefix | segment_prefixes ),
+	repeat_n_segments	= ( rep_test_prefix | segment_prefixes )
 } opcode_prefix;
 
 /*

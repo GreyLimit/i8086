@@ -573,7 +573,7 @@ opcode opcodes[] = {
  * B	1110 110w
  */
 /*B*/	{ op_in,	flag_086,	no_prefix,		no_modifier,	1,	{ ea_accumulators, ea_empty },		3,	{ SB(0xEC),IDS(0,SIGN_IGNORED),SDS(0,0) }},
-/*A*/	{ op_in,	flag_086,	no_prefix,		no_modifier,	2,	{ ea_accumulators, ea_immediate },	5,	{ SB(0xE4),IDS(0,SIGN_IGNORED),SDS(0,0),FDS(0,1),IMM(1) }},
+/*A*/	{ op_in,	flag_086,	no_prefix,		no_modifier,	2,	{ ea_accumulators, ea_immediate },	5,	{ SB(0xE4),IDS(0,SIGN_IGNORED),SDS(0,0),FDS(DATA_SIZE_BYTE,SIGN_UNSIGNED),IMM(1) }},
 
 /* Programming_the_8086_8088
  * Page 97
@@ -879,9 +879,9 @@ opcode opcodes[] = {
  *	Load String (Byte or word)
  *	1010 110w
  */
-	{ op_lods,	flag_086,	no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xAC) }},
-	{ op_lods,	flag_086,	no_prefix,		byte_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xAC) }},
-	{ op_lods,	flag_086,	no_prefix,		word_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xAD) }},
+	{ op_lods,	flag_086,	repeat_n_segments,	no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xAC) }},
+	{ op_lods,	flag_086,	repeat_n_segments,	byte_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xAC) }},
+	{ op_lods,	flag_086,	repeat_n_segments,	word_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xAD) }},
 
 /* Programming_the_8086_8088
  * Page 128
@@ -942,15 +942,116 @@ opcode opcodes[] = {
 /*F*/	{ op_mov,	flag_086|flag_abs,lock_n_segments,	no_modifier,	2,	{ ea_segment_reg, ea_mod_wreg_adrs },	3,	{ SB(0x8E),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),EA(0,1) }},
 /*G*/	{ op_mov,	flag_086|flag_abs,lock_n_segments,	no_modifier,	2,	{ ea_mod_wreg_adrs, ea_segment_reg },	3,	{ SB(0x8C),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),EA(1,0) }},
 
+/* Programming_the_8086_8088
+ * Pages 133
+ *
+ * 	MOVe String (from SI to DI)
+ *	1010 010w
+ */
+	{ op_movs,	flag_086,	repeat_n_segments,	no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xA4) }},
+	{ op_movs,	flag_086,	repeat_n_segments,	byte_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xA4) }},
+	{ op_movs,	flag_086,	repeat_n_segments,	word_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xA5) }},
+
+/* Programming_the_8086_8088
+ * Pages 134
+ *
+ * 	MULtiply source
+ *	1111 011w, mod 100 r/m
+ */
+	{ op_mul,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xF6),IDS(0,SIGN_UNSIGNED),EAO(B100,0),SDS(0,0) }},
+
+/* Programming_the_8086_8088
+ * Pages 135
+ *
+ * 	NEGate distination (2s complement)
+ *	1111 011w, mod 011 r/m
+ */
+	{ op_neg,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xF6),IDS(0,SIGN_IGNORED),EAO(B011,0),SDS(0,0) }},
+
+/* Programming_the_8086_8088
+ * Pages 136
+ *
+ * 	No OPeration
+ *	1001 0000
+ */
+	{ op_nop,	flag_086,	no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0x90) }},
+
+/* Programming_the_8086_8088
+ * Pages 137
+ *
+ * 	NOT distination (1s complement)
+ *	1111 011w, mod 010 r/m
+ */
+	{ op_neg,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xF6),IDS(0,SIGN_IGNORED),EAO(B010,0),SDS(0,0) }},
+
+
+/* Programming_the_8086_8088
+ * Pages 138,139
+ *
+ *	Or memory or Register Operand with Register Operand
+ * A	0000 10dw, mod reg r/m
+ * 
+ *	Or immediate Operand to Memory or Register Operand
+ * B	1000 00sw, mod 001 r/m, data, data if sw = 01
+ *
+ *	Or immediate Operand to Accumulator
+ * C	0000 110w, data, data if w =1
+ */
+/*C*/	{ op_or,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_accumulators, ea_immediate },	4,	{ SB(0x0C),IDS(0,SIGN_IGNORED),IMM(1),SDS(0,0) }},
+/*B*/	{ op_or,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	5,	{ SB(0x80),IDS(0,SIGN_IGNORED),EAO(B001,0),IMM(1),SDS(0,0) }},
+/*A*/	{ op_or,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	6,	{ SB(0x08),SDR(DIRECT_TO_REG,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0),VDS(1) }},
+/*A*/	{ op_or,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	6,	{ SB(0x08),SDR(DIRECT_TO_EA,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0),VDS(0) }},
+
+/* Programming_the_8086_8088
+ * Page 140
+ *
+ *	Output byte or word (fixed port) 
+ * A	1110 011w, port
+ *
+ *	Output byte or word (indirect port, DX)
+ * B	1110 111w
+ */
+/*B*/	{ op_out,	flag_086,	no_prefix,		no_modifier,	1,	{ ea_accumulators, ea_empty },		3,	{ SB(0xEE),IDS(0,SIGN_IGNORED),SDS(0,0) }},
+/*A*/	{ op_out,	flag_086,	no_prefix,		no_modifier,	2,	{ ea_immediate, ea_accumulators },	5,	{ SB(0xE6),IDS(1,SIGN_UNSIGNED),SDS(0,0),FDS(DATA_SIZE_BYTE,SIGN_UNSIGNED),IMM(0) }},
+
+/* iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-126
+ *
+ *	Output string (bytes or words)
+ *	0110 111w
+ */
+	{ op_outs,	flag_186,	rep_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			3,	{ SB(0x6E),FDS(DATA_SIZE_BYTE,SIGN_IGNORED),SDS(0,0) }},
+	{ op_outs,	flag_186,	rep_prefix,		byte_modifier,	0,	{ ea_empty, ea_empty },			3,	{ SB(0x6E),FDS(DATA_SIZE_BYTE,SIGN_IGNORED),SDS(0,0) }},
+	{ op_outs,	flag_186,	rep_prefix,		word_modifier,	0,	{ ea_empty, ea_empty },			3,	{ SB(0x6E),FDS(DATA_SIZE_WORD,SIGN_IGNORED),SDS(0,0) }},
+
+/* Programming_the_8086_8088
+ * Page 141
+ *
+ *	Pop memory or register operand
+ * A	1000 1111, mod 000 r/m
+ *
+ *	Pop register operand
+ * B	0101 1reg
+ *
+ * C	Pop segment register
+ * 	000r eg111
+ */
+/*C*/	{ op_pop,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_segment_reg, ea_empty },		2,	{ SB(0x07),REG(0,0,3) }},
+/*B*/	{ op_pop,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_word_registers, ea_empty },	2,	{ SB(0x58),REG(0,0,0) }},
+/*A*/	{ op_pop,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		2,	{ SB(0x8F),EAO(B000,0) }},
 
 
 
-	{ op_ret,	flag_086,	no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xC2),FDS(1,1),IMM(0) }},
+
+
+
+
+	{ op_ret,	flag_086,	no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xC2),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
 	{ op_ret,	flag_086,	no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xC3) }},
-	{ op_ret,	flag_086|flag_abs,no_prefix,		far_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(1,1),IMM(0) }},
+	{ op_ret,	flag_086|flag_abs,no_prefix,		far_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
 	{ op_ret,	flag_086|flag_abs,no_prefix,		far_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xCB) }},
 
-	{ op_lret,	flag_086|flag_abs,no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(1,1),IMM(0) }},
+	{ op_lret,	flag_086|flag_abs,no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
 	{ op_lret,	flag_086|flag_abs,no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xCB) }},
 	{ nothing }
 };

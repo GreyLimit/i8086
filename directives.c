@@ -87,9 +87,11 @@ static boolean process_dir_equ( id_record *label, int args, token_record **arg, 
 static boolean process_dir_data( int size, value_scope scope, int args, token_record **arg, int *len ) {
 	byte	buffer[ 4 ];
 	int	i;
+	boolean	ret;
 
 	ASSERT(( size == 1 )||( size == 2 )||( size == 4 ));
 
+	ret = TRUE;
 	for( i = 0; i < args; i++ ) {
 
 		ASSERT( len[ i ] > 0 );
@@ -108,7 +110,7 @@ static boolean process_dir_data( int size, value_scope scope, int args, token_re
 					/*
 					 *	We will do this the easy way.
 					 */
-					output_data( arg[ i ]->var.block.ptr, l );
+					ret &= output_data( arg[ i ]->var.block.ptr, l );
 				}
 				else {
 					int	k, v;
@@ -121,7 +123,7 @@ static boolean process_dir_data( int size, value_scope scope, int args, token_re
 							buffer[ k ] = v & 0xff;
 							v >>= 8;
 						}
-						output_data( buffer, size );
+						ret &= output_data( buffer, size );
 					}
 				}
 			}
@@ -158,10 +160,10 @@ static boolean process_dir_data( int size, value_scope scope, int args, token_re
 				buffer[ k ] = v & 0xff;
 				v >>= 8;
 			}
-			output_data( buffer, size );
+			ret &= output_data( buffer, size );
 		}
 	}
-	return( TRUE );
+	return( ret );
 }
 
 /*
@@ -215,8 +217,7 @@ static boolean process_dir_reserve( int args, token_record **arg, int *len ) {
 	/*
 	 *	All good.
 	 */
-	output_space( val.value );
-	return( TRUE );
+	return( output_space( val.value ));
 }
 
 /*
@@ -281,14 +282,15 @@ static boolean process_dir_align( int args, token_record **arg, int *len ) {
 		log_error( "Invalid ALIGN specification" );
 		return( FALSE );
 	}
-	if(( gap = this_segment->posn % alignment )) {
-		/*
-		 *	so we are not (by luck) on a suitable
-		 *	alignment, add in necessary space.
-		 */
-		output_space( alignment - gap );
-	}
-	return( TRUE );
+	/*
+	 *	Work out the gap and return if it is zero.
+	 */
+	if(( gap = this_segment->posn % alignment ) == 0 ) return( TRUE );
+	/*
+	 *	so we are not (by luck) on a suitable
+	 *	alignment, add in necessary space.
+	 */
+	return( output_space( alignment - gap ));
 }
 
 /*
@@ -360,8 +362,8 @@ static boolean process_dir_import( int args, token_record **arg, int *len ) {
  *	in memory.
  *
  *	The segments listed can belong to only a single group and while
- *	different segments can reference different segment registers
- *	all the segment registers will point to the paragraph that
+ *	different segments can reference through different segment registers
+ *	all the segment registers will point to the same paragraph that
  *	represents the start off the group.
  *
  *		{label}	GROUP	{segment}[,{segment}]*
@@ -461,19 +463,28 @@ static boolean process_dir_group( id_record *label, int args, token_record **arg
 		}
 		else if( arg[ i ]->id == tok_immediate ) {
 			/*
-			 *	A numerical argument is the page number to associate
+			 *	A numerical argument is a page number to associate
 			 *	with this group.
 			 */
 			if( pages ) {
 				log_error_i( "GROUP page index can only be set once", i+1 );
 				return( FALSE );
 			}
+			/*
+			 *	TODO - shouldn't there be some sort of numerical
+			 *	validation on the constant provided?  Shoudn't it
+			 *	be, at the very least, in uword_scope?
+			 */
+			 if( !BOOL( arg[ i ]->var.constant.scope & scope_uword )) {
+				log_error_i( "GROUP page index must be an unsigned word", i+1 );
+				return( FALSE );
+			}
 			gp->page = arg[ i ]->var.constant.value;
 			pages++;
 		}
 		else {
-				log_error_i( "Invalid GROUP argument", i+1 );
-				return( FALSE );
+			log_error_i( "Invalid GROUP argument", i+1 );
+			return( FALSE );
 		}
 	}
 	/*

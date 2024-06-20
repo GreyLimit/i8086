@@ -10,17 +10,38 @@
 #include "includes.h"
 
 /*
- *	Flag that controls the output of the binary
- *	files as either raw binary data or cooked ASCII
- *	hexadecimal data dump.
+ *	We will default to the testing API for the moment so that
+ *	the output remains clearly available.
+ *
+ *	TODO: Sort out the output selection and file open/close
+ *	code.
  */
-boolean target_hex = FALSE;
+static output_api *target_api = NIL( output_api );
 
 /*
  *	The file handle where the output is being directed.
  */
-FILE *target_file = NIL( FILE );
+static FILE *target_file = NIL( FILE );
 
+/*
+ *	Flag that controls the output of the binary
+ *	files as either raw binary data or cooked ASCII
+ *	hexadecimal data dump.
+ */
+static boolean target_hex = FALSE;
+
+
+/*
+ *	The call to initialise the output API
+ */
+void initialise_output( output_api *api, boolean hex ) {
+
+	ASSERT( target_api == NIL( output_api ));
+	ASSERT( api != NIL( output_api ));
+	
+	target_api = api;
+	target_hex = hex;
+}
 
 /*
  *	Generic Output API
@@ -30,39 +51,51 @@ FILE *target_file = NIL( FILE );
  *	for the creation of the output data
  */
 
-/*
- *	We will default to the testing API for the moment so that
- *	the output remains clearly available.
- *
- *	TODO: Sort out the output selection and file open/close
- *	code.
- */
-output_api *target_api = NIL( output_api );
-
 boolean open_file( char *name ) {
+
 	ASSERT( target_api != NIL( output_api ));
-	return( FUNC( target_api->open_file )( name ));
+	ASSERT( target_file == NIL( FILE ));
+
+	return( FUNC( target_api->open_file )( &target_file, target_hex, name ));
 }
-void close_file( void ) {
+
+boolean close_file( void ) {
+
 	ASSERT( target_api != NIL( output_api ));
-	FUNC( target_api->close_file )();
+	ASSERT( target_file != NIL( FILE ));
+	
+	return( FUNC( target_api->close_file )( target_file, target_hex ));
 }
-void output_data( byte *data, int len ) {
+
+boolean output_data( byte *data, int len ) {
+	boolean	ret;
+	
 	ASSERT( target_api != NIL( output_api ));
+	ASSERT( target_file != NIL( FILE ));
+	
 	ASSERT( this_segment != NIL( segment_record ));
 	ASSERT( data != NIL( byte ));
 	ASSERT( len >= 0 );
 
-	if( this_segment == codegen_segment ) FUNC( target_api->output_data )( data, len );
+	ret = ( this_segment == codegen_segment )? FUNC( target_api->output_data )( target_file, target_hex, data, len ): TRUE;
+	
 	this_segment->posn += len;
+	return( ret );
 }
-void output_space( int count ) {
+
+boolean output_space( int count ) {
+	boolean	ret;
+	
 	ASSERT( target_api != NIL( output_api ));
+	ASSERT( target_file != NIL( FILE ));
+	
 	ASSERT( this_segment != NIL( segment_record ));
 	ASSERT( count >= 0 );
 
-	if( this_segment == codegen_segment ) FUNC( target_api->output_space )( count );
+	ret = ( this_segment == codegen_segment )? FUNC( target_api->output_space )( target_file, target_hex, count ): TRUE;
+	
 	this_segment->posn += count;
+	return( ret );
 }
 
 
