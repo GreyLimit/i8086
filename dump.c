@@ -245,6 +245,20 @@ static void display_definition( opcode *op ) {
 				printf( ", REL(arg=%d,range=%s,byte=%d,bit=%d)", REL_ARG( w ), display_range( REL_RANGE( w )), REL_INDEX( w ), REL_BIT( w ));
 				break;
 			}
+			case TER_ACT: {
+				/*
+				 *	TEst Register (Action 11)
+				 *
+				 *	Check that the argument specified is, (or is not) a specified
+				 *	register.
+				 *
+				 *	TER(a,p,r)	a = Argument number of immediate data
+				 *			p = condition result required to pass
+				 *			r = register specification
+				 */
+				printf( ", TER(arg=%d,pass=%d,reg=%d)", TER_ARG( w ), TER_PASS( w ), TER_REG( w ));
+				break;
+			}
 			case VDS_ACT: {
 				/*
 				 *	Verify Data Size (Action 11)
@@ -286,15 +300,33 @@ static void display_instruction( boolean show_more, char *flags, component *mods
 	for( i = 0; i < op->args; i++ ) {
 		component	arg_mods[ MAXIMUM_MODIFIERS ];
 		boolean		has_imm,
-				has_ind;
+				has_ind,
+				has_far;
 		
 		if( i ) printf( ", " );
 		expand_modifier( arg[ i ].mod, arg_mods, MAXIMUM_MODIFIERS );
 		for( j = 0; arg_mods[ j ] != nothing; printf( "%s ", component_text( arg_mods[ j++ ])));
 		
-		has_imm = BOOL( arg[ i ].ea & ( ea_immediate | ea_indirect | ea_base_disp | ea_index_disp | ea_base_index_disp ));
-		has_ind = BOOL( arg[ i ].ea & ( ea_indirect | ea_pointer_reg | ea_base_disp | ea_index_disp | ea_base_index_disp ));
+		has_imm = BOOL( arg[ i ].ea & (	ea_immediate |		ea_far_immediate |
+						ea_indirect |		ea_far_indirect |
+						ea_base_disp |		ea_far_base_disp |
+						ea_index_disp |		ea_far_index_disp |
+						ea_base_index_disp |	ea_far_base_index_disp ));
 
+		has_ind = BOOL( arg[ i ].ea & (	ea_indirect |		ea_far_indirect |
+						ea_pointer_reg | 	ea_far_pointer_reg |
+						ea_base_disp |		ea_far_base_disp |
+						ea_index_disp |		ea_far_index_disp |
+						ea_base_index_disp |	ea_far_base_index_disp ));
+
+		has_far = BOOL( arg[ i ].ea & (	ea_far_immediate |
+						ea_far_indirect |
+						ea_far_pointer_reg |
+						ea_far_base_disp |
+						ea_far_index_disp |
+						ea_far_base_index_disp ));
+
+		if( has_far ) printf( "far " );
 		if( has_ind ) printf( "[" );
 		for( j = 0; j < arg[ i ].registers; j++ ) {
 			if( j ) printf( "+" );
@@ -361,7 +393,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->reg[ 0 ] = register_component( byte_register[ state->step ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = 0;
-						target->immediate_arg.scope = scope_byte;
+						target->immediate_arg.scope = scope_none;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
@@ -377,7 +409,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->reg[ 0 ] = register_component( byte_register[ state->step ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = 0;
-						target->immediate_arg.scope = scope_byte;
+						target->immediate_arg.scope = scope_none;
 						target->immediate_arg.segment = NIL( segment_record );
 						return( TRUE );
 					}
@@ -391,7 +423,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->reg[ 0 ] = register_component( word_register[ state->step ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = 0;
-						target->immediate_arg.scope = scope_word;
+						target->immediate_arg.scope = scope_none;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
@@ -407,7 +439,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->reg[ 0 ] = register_component( word_register[ state->step ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = 0;
-						target->immediate_arg.scope = scope_word;
+						target->immediate_arg.scope = scope_none;
 						target->immediate_arg.segment = NIL( segment_record );
 						return( TRUE );
 					}
@@ -415,26 +447,27 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				}
 				case ea_immediate:
 				case ea_far_immediate: {
+					target->ea = state->pick;
+					target->mod = no_modifier;
+					target->registers = 0;
+					target->segment_override = UNKNOWN_SEG;
+					target->immediate_arg.segment = NIL( segment_record );
 					switch( state->step ) {
 						case 0: {
-							target->ea = state->pick;
-							target->mod = no_modifier;
-							target->registers = 0;
-							target->segment_override = UNKNOWN_SEG;
 							target->immediate_arg.value = 0x55;
 							target->immediate_arg.scope = scope_byte;
-							target->immediate_arg.segment = NIL( segment_record );
 							state->step++;
 							return( TRUE );
 						}
 						case 1: {
-							target->ea = state->pick;
-							target->mod = no_modifier;
-							target->registers = 0;
-							target->segment_override = UNKNOWN_SEG;
-							target->immediate_arg.value = 0x5555;
+							target->immediate_arg.value = 0x555;
 							target->immediate_arg.scope = scope_word;
-							target->immediate_arg.segment = NIL( segment_record );
+							state->step++;
+							return( TRUE );
+						}
+						case 2: {
+							target->immediate_arg.value = 0x5555;
+							target->immediate_arg.scope = scope_address;
 							state->step++;
 							return( TRUE );
 						}
@@ -452,7 +485,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->registers = 0;
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = 0xAAAA;
-						target->immediate_arg.scope = scope_word;
+						target->immediate_arg.scope = scope_address;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
@@ -468,7 +501,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->reg[ 0 ] = register_component( pointer_register[ state->step ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = 0;
-						target->immediate_arg.scope = scope_word;
+						target->immediate_arg.scope = scope_none;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
@@ -488,7 +521,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( base_register[ br ]);
 						target->segment_override = UNKNOWN_SEG;
-						target->immediate_arg.value = iw? 0xAAAA: 0xAA;
+						target->immediate_arg.value = iw? 0xDDDD: 0xDD;
 						target->immediate_arg.scope = iw? scope_word: scope_byte;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
@@ -509,7 +542,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( index_register[ ir ]);
 						target->segment_override = UNKNOWN_SEG;
-						target->immediate_arg.value = iw? 0xAAAA: 0xAA;
+						target->immediate_arg.value = iw? 0xDDDD: 0xDD;
 						target->immediate_arg.scope = iw? scope_word: scope_byte;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
@@ -522,7 +555,6 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 					boolean	iw;
 					int	br,
 						ir;
-
 
 					/*
 					 *	Break out the three value
@@ -542,7 +574,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->reg[ 0 ] = register_component( base_register[ br ]);
 						target->reg[ 1 ] = register_component( index_register[ ir ]);
 						target->segment_override = UNKNOWN_SEG;
-						target->immediate_arg.value = iw? 0xAAAA: 0xAA;
+						target->immediate_arg.value = iw? 0xDDDD: 0xDD;
 						target->immediate_arg.scope = iw? scope_word: scope_byte;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
@@ -558,7 +590,7 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 						target->reg[ 0 ] = register_component( segment_register[ state->step ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = 0;
-						target->immediate_arg.scope = scope_word;
+						target->immediate_arg.scope = scope_none;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );

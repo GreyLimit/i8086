@@ -16,10 +16,46 @@
  */
  
 /*
- * 	Number of byte and word registers
+ *	In the instruction encodings and register tables the registers
+ *	are indexed by their CPU internal index number.  These are fixed by
+ *	the CPU and rely on contextual knowledge to know if you are specifying
+ *	a byte, word or segment register.
  */
+ 
+/* BYTE Registers */
 #define BYTE_REGISTERS		8
+#define REG_AL			0
+#define REG_CL			1
+#define REG_DL			2
+#define REG_BL			3
+#define REG_AH			4
+#define REG_CH			5
+#define REG_DH			6
+#define REG_BH			7
+
+/* WORD Registers */
 #define WORD_REGISTERS		8
+#define REG_AX			0
+#define REG_CX			1
+#define REG_DX			2
+#define REG_BX			3
+#define REG_SP			4
+#define REG_BP			5
+#define REG_SI			6
+#define REG_DI			7
+
+/* Segment Registers */
+#define SEGMENT_REGISTERS	4
+#define REG_CS			0
+#define REG_DS			1
+#define REG_SS			2
+#define REG_ES			3
+/*
+ *	Special case handles outside the normal segment registers
+ *	internal numbers.
+ */
+#define UNKNOWN_SEG		(SEGMENT_REGISTERS)
+#define UNREQUIRED_SEG		(SEGMENT_REGISTERS+1)
 
 /*
  *	Number of registers which can be used to directly reference
@@ -33,26 +69,6 @@
  */
 #define BASE_REGISTERS		2
 #define INDEX_REGISTERS		2
-
-/*
- *	Provide simple value names for the segment register numbers as
- *	well as values representing situations where either a segment
- *	register has not been identified yet (UNKNOWN_SEG) or where a
- *	segment register is not required/pertinent (UNREQUIRED_SEG).
- */
-#define SEGMENT_REGISTERS	4
-
-#define CODE_SEG_REG		0
-#define DATA_SEG_REG		1
-#define STACK_SEG_REG		2
-#define EXTRA_SEG_REG		3
-
-/*
- *	Special case handles outside the normal segment registers
- *	internal numbers.
- */
-#define UNKNOWN_SEG		(SEGMENT_REGISTERS)
-#define UNREQUIRED_SEG		(SEGMENT_REGISTERS+1)
 
 /*
  *	Define some limts on the nature of a single assembler

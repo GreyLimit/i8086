@@ -245,26 +245,26 @@ opcode_prefix map_segment_prefix( byte segment_reg ) {
 static register_data component_eas[] = {
 /*	  Register	E Adrs						Reg		Ptr	B/I	Implied Seg	*/
 /*	  --------	------	----					---		---	---	-----------	*/
-	{ reg_al,	ac_byte_reg|ac_acc_reg,				0,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_cl,	ac_byte_reg,					1,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_dl,	ac_byte_reg,					2,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_bl,	ac_byte_reg,					3,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_ah,	ac_byte_reg,					4,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_ch,	ac_byte_reg,					5,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_dh,	ac_byte_reg,					6,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_bh,	ac_byte_reg,					7,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_ax,	ac_word_reg|ac_acc_reg,				0,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_cx,	ac_word_reg,					1,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_dx,	ac_word_reg,					2,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_bx,	ac_word_reg|ac_pointer_reg|ac_base_reg,		3,		B111,	B000,	DATA_SEG_REG	},
-	{ reg_sp,	ac_word_reg,					4,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_bp,	ac_word_reg|ac_pointer_reg|ac_base_reg,		5,		B110,	B010,	STACK_SEG_REG	},
-	{ reg_si,	ac_word_reg|ac_pointer_reg|ac_index_reg,	6,		B100,	B000,	DATA_SEG_REG	},
-	{ reg_di,	ac_word_reg|ac_pointer_reg|ac_index_reg,	7,		B101,	B001,	UNREQUIRED_SEG	},
-	{ reg_cs,	ac_segment_reg,					CODE_SEG_REG,	0,	0,	UNREQUIRED_SEG	},
-	{ reg_ds,	ac_segment_reg,					DATA_SEG_REG,	0,	0,	UNREQUIRED_SEG	},
-	{ reg_ss,	ac_segment_reg,					STACK_SEG_REG,	0,	0,	UNREQUIRED_SEG	},
-	{ reg_es,	ac_segment_reg,					EXTRA_SEG_REG,	0,	0,	UNREQUIRED_SEG	},
+	{ reg_al,	ac_byte_reg|ac_acc_reg,				REG_AL,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_cl,	ac_byte_reg,					REG_CL,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_dl,	ac_byte_reg,					REG_DL,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_bl,	ac_byte_reg,					REG_BL,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_ah,	ac_byte_reg,					REG_AH,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_ch,	ac_byte_reg,					REG_CH,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_dh,	ac_byte_reg,					REG_DH,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_bh,	ac_byte_reg,					REG_BH,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_ax,	ac_word_reg|ac_acc_reg,				REG_AX,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_cx,	ac_word_reg,					REG_CX,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_dx,	ac_word_reg,					REG_DX,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_bx,	ac_word_reg|ac_pointer_reg|ac_base_reg,		REG_BX,		B111,	B000,	REG_DS	},
+	{ reg_sp,	ac_word_reg,					REG_SP,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_bp,	ac_word_reg|ac_pointer_reg|ac_base_reg,		REG_BP,		B110,	B010,	REG_SS	},
+	{ reg_si,	ac_word_reg|ac_pointer_reg|ac_index_reg,	REG_SI,		B100,	B000,	REG_DS	},
+	{ reg_di,	ac_word_reg|ac_pointer_reg|ac_index_reg,	REG_DI,		B101,	B001,	UNREQUIRED_SEG	},
+	{ reg_cs,	ac_segment_reg,					REG_CS,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_ds,	ac_segment_reg,					REG_DS,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_ss,	ac_segment_reg,					REG_SS,		0,	0,	UNREQUIRED_SEG	},
+	{ reg_es,	ac_segment_reg,					REG_ES,		0,	0,	UNREQUIRED_SEG	},
 	{ nothing,	ac_empty,					0,		0,	0,	UNREQUIRED_SEG	}
 };
 
@@ -1033,26 +1033,183 @@ opcode opcodes[] = {
  *	Pop register operand
  * B	0101 1reg
  *
- * C	Pop segment register
+ * C	Pop segment register (except CS)
  * 	000r eg111
  */
-/*C*/	{ op_pop,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_segment_reg, ea_empty },		2,	{ SB(0x07),REG(0,0,3) }},
+/*C*/	{ op_pop,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_segment_reg, ea_empty },		3,	{ SB(0x07),TER(0,MATCH_FALSE,REG_CS),REG(0,0,3) }},
 /*B*/	{ op_pop,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_word_registers, ea_empty },	2,	{ SB(0x58),REG(0,0,0) }},
 /*A*/	{ op_pop,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		2,	{ SB(0x8F),EAO(B000,0) }},
 
+/* iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-129,130
+ *
+ *	Pop all registers
+ *	0110 0001
+ */
+	{ op_popa,	flag_186,	pref_lock,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0x61) }},
 
+/* Programming_the_8086_8088
+ * Page 141
+ * iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-131
+ * 
+ *	Pop flags
+ *	1001 1101
+ *
+ *	NOTE:	The 8086 manual specifically has the opcode as "1001 1100".
+ *		However the 80186 manual show this code as "1001 1101".
+ *		Confirmation via an on-line assembler indicates the 80186
+ *		manual is correct.
+ * 	NOTE:	Machine coding in original 8086 programming manual had the
+ *		binary values of popf and pushf reversed.
+ */
+	{ op_popf,	flag_086,	pref_lock,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0x9D) }},
 
+/* Programming_the_8086_8088
+ * Page 143
+ *
+ *	Push memory or register operand
+ * A	1111 1111, mod 110 r/m
+ *
+ *	Push register operand
+ * B	0101 0reg
+ *
+ * C	Push segment register
+ * 	000r eg110
+ */
+/*C*/	{ op_push,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_segment_reg, ea_empty },		2,	{ SB(0x06),REG(0,0,3) }},
+/*B*/	{ op_push,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_word_registers, ea_empty },	2,	{ SB(0x50),REG(0,0,0) }},
+/*A*/	{ op_push,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		2,	{ SB(0xFF),EAO(B110,0) }},
 
+/* iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-134,135
+ *
+ *	Push all registers
+ *	0110 0000
+ */
+	{ op_pusha,	flag_186,	pref_lock,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0x60) }},
 
+/* Programming_the_8086_8088
+ * Page 144
+ * iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-136
+ * 
+ *	Pop flags
+ *	1001 1100
+ *
+ *	NOTE:	The 8086 manual specifically has the opcode as "1001 1101".
+ *		However the 80186 manual show this code as "1001 1100".
+ *		Confirmation via an on-line assembler indicates the 80186
+ *		manual is correct.
+ * 	NOTE:	Machine coding in original 8086 programming manual had the
+ *		binary values of popf and pushf reversed.
+ */
+	{ op_popf,	flag_086,	pref_lock,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0x9C) }},
 
+/* Programming_the_8086_8088
+ * Page 145
+ *
+ *	Rotate EA Left through CF 1 bit
+ * A 	1101 000w, mod 010 r/m
+ *
+ *	Rotate EA Left through CF 'CL' bits
+ * B	1101 001w, mod 010 r/m
+ *
+ * iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-137,138
+ *
+ *	Rotate EA Left through CF imm8 bits
+ * C	1100 000w, mod 010 r/m, imm8
+ *	
+ */
+/*A*/	{ op_rcl,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xD0),IDS(0,SIGN_IGNORED),EAO(B010,0),SDS(0,0) }},
+/*B*/	{ op_rcl,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_byte_reg },	5,	{ SB(0xD2),IDS(0,SIGN_IGNORED),TER(1,MATCH_TRUE,REG_CL),EAO(B010,0),SDS(0,0) }},
+/*C*/	{ op_rcl,	flag_186,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	6,	{ SB(0xC0),IDS(0,SIGN_IGNORED),EAO(B010,0),SDS(0,0),FDS(DATA_SIZE_BYTE,SIGN_UNSIGNED),IMM(1) }},
 
-	{ op_ret,	flag_086,	no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xC2),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
-	{ op_ret,	flag_086,	no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xC3) }},
-	{ op_ret,	flag_086|flag_abs,no_prefix,		far_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
-	{ op_ret,	flag_086|flag_abs,no_prefix,		far_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xCB) }},
+/* Programming_the_8086_8088
+ * Page 146
+ *
+ *	Rotate EA Right through CF 1 bit
+ * A 	1101 000w, mod 011 r/m
+ *
+ *	Rotate EA Right through CF 'CL' bits
+ * B	1101 001w, mod 011 r/m
+ *
+ * iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-137,138
+ *
+ *	Rotate EA Right through CF imm8 bits
+ * C	1100 000w, mod 011 r/m, imm8
+ *	
+ */
+/*A*/	{ op_rcr,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xD0),IDS(0,SIGN_IGNORED),EAO(B011,0),SDS(0,0) }},
+/*B*/	{ op_rcr,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_byte_reg },	5,	{ SB(0xD2),IDS(0,SIGN_IGNORED),TER(1,MATCH_TRUE,REG_CL),EAO(B011,0),SDS(0,0) }},
+/*C*/	{ op_rcr,	flag_186,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	6,	{ SB(0xC0),IDS(0,SIGN_IGNORED),EAO(B011,0),SDS(0,0),FDS(DATA_SIZE_BYTE,SIGN_UNSIGNED),IMM(1) }},
 
-	{ op_lret,	flag_086|flag_abs,no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
-	{ op_lret,	flag_086|flag_abs,no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xCB) }},
+/* Programming_the_8086_8088
+ * Page 149,150
+ *
+ *	Return from subroutne (near)
+ * A 	1100 0011
+ *
+ *	Return from subroutine (near) with 16-bit stack correction
+ * B	1100 0010, imm-l, imm-h
+ *
+ *	Return from subroutne (far)
+ * C	1100 1011
+ *
+ *	Return from subroutine (far) with 16-bit stack correction
+ * D	1100 1010, imm-l, imm-h
+ */
+/*B*/	{ op_ret,	flag_086,	no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xC2),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
+/*A*/	{ op_ret,	flag_086,	no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xC3) }},
+/*D*/	{ op_ret,	flag_086|flag_abs,no_prefix,		far_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
+/*C*/	{ op_ret,	flag_086|flag_abs,no_prefix,		far_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xCB) }},
+/*D*/	{ op_lret,	flag_086|flag_abs,no_prefix,		no_modifier,	1,	{ ea_immediate, ea_empty },		3,	{ SB(0xCA),FDS(DATA_SIZE_WORD,SIGN_UNSIGNED),IMM(0) }},
+/*C*/	{ op_lret,	flag_086|flag_abs,no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			1,	{ SB(0xCB) }},
+
+/* Programming_the_8086_8088
+ * Page 151
+ *
+ *	Rotate EA Left 1 bit
+ * A 	1101 000w, mod 010 r/m
+ *
+ *	Rotate EA Left 'CL' bits
+ * B	1101 001w, mod 010 r/m
+ *
+ * iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-145
+ *
+ *	Rotate EA Left imm8 bits
+ * C	1100 000w, mod 010 r/m, imm8
+ *	
+ */
+/*A*/	{ op_rol,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xD0),IDS(0,SIGN_IGNORED),EAO(B000,0),SDS(0,0) }},
+/*B*/	{ op_rol,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_byte_reg },	5,	{ SB(0xD2),IDS(0,SIGN_IGNORED),TER(1,MATCH_TRUE,REG_CL),EAO(B000,0),SDS(0,0) }},
+/*C*/	{ op_rol,	flag_186,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	6,	{ SB(0xC0),IDS(0,SIGN_IGNORED),EAO(B000,0),SDS(0,0),FDS(DATA_SIZE_BYTE,SIGN_UNSIGNED),IMM(1) }},
+
+/* Programming_the_8086_8088
+ * Page 152
+ *
+ *	Rotate EA Right 1 bit
+ * A 	1101 000w, mod 011 r/m
+ *
+ *	Rotate EA Right 'CL' bits
+ * B	1101 001w, mod 011 r/m
+ *
+ * iAPX86_88_186_188_Programmers_Reference (1983)
+ * Page 3-146
+ *
+ *	Rotate EA Right imm8 bits
+ * C	1100 000w, mod 011 r/m, imm8
+ *	
+ */
+/*A*/	{ op_ror,	flag_086,	lock_n_segments,	no_modifier,	1,	{ ea_mod_reg_adrs, ea_empty },		4,	{ SB(0xD0),IDS(0,SIGN_IGNORED),EAO(B001,0),SDS(0,0) }},
+/*B*/	{ op_ror,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_byte_reg },	5,	{ SB(0xD2),IDS(0,SIGN_IGNORED),TER(1,MATCH_TRUE,REG_CL),EAO(B001,0),SDS(0,0) }},
+/*C*/	{ op_ror,	flag_186,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	6,	{ SB(0xC0),IDS(0,SIGN_IGNORED),EAO(B001,0),SDS(0,0),FDS(DATA_SIZE_BYTE,SIGN_UNSIGNED),IMM(1) }},
+
+/* SHAF */
+
 	{ nothing }
 };
 

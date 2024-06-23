@@ -23,10 +23,6 @@ boolean is_prefix( component comp ) {
 	return(( comp >= pref_lock )&&( comp <= pref_repnz ));
 }
 
-boolean is_reg_segment( component comp ) {
-	return(( comp >= reg_cs )&&( comp <= reg_es ));
-}
-
 boolean is_modifier( component comp ) {
 	return(( comp >= mod_byte )&&( comp <= mod_far ));
 }

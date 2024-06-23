@@ -27,10 +27,12 @@ typedef enum {
 	op_cbw,		op_clc,		op_cld,		op_cli,
 	op_cmc,		op_cmp,		op_cmps,	op_cwd,
 	op_daa,		op_das,		op_dec,		op_div,
-	op_esc,		op_enter,	op_hlt,		op_idiv,	op_imul,
-	op_in,		op_inc,		op_ins,		op_int,		op_intr,
-	op_into,	op_iret,	op_ja,		op_jnbe,	op_jbe,
-	op_jae,		op_jna,		op_jnb,		op_jb,		op_jnae,
+	op_esc,		op_enter,	op_hlt,
+	op_idiv,	op_imul,	op_in,		op_inc,
+	op_ins,		op_int,		op_intr,
+	op_into,	op_iret,
+	op_ja,		op_jnbe,	op_jbe,		op_jae,
+	op_jna,		op_jnb,		op_jb,		op_jnae,
 	op_jc,		op_jcxz,	op_je,		op_jz,
 	op_jg,		op_jnle,	op_jge,		op_jnl,
 	op_jl,		op_jnge,	op_jle,		op_jng,
@@ -39,14 +41,17 @@ typedef enum {
 	op_jno,		op_jnp,		op_jpo,		op_jns,
 	op_jo,		op_jp,		op_jpe,		op_js,
 	op_lahf,	op_lds,		op_lea,		op_leave,
-	op_les,		op_lods,	op_looppe,	op_looppz,	op_loopnz,
-	op_loop,	op_loope,	op_loopz,	op_loopne,	op_loopna,
+	op_les,		op_lods,
+	op_looppe,	op_looppz,	op_loopnz,	op_loop,
+	op_loope,	op_loopz,	op_loopne,	op_loopna,
 	op_mov,		op_movs,	op_movsb,	op_movsw,
 	op_mul,		op_neg,		op_nop,		op_not,
 	op_or,		op_out,		op_outs,
-	op_pop,		op_popf,
-	op_push,	op_pushf,	op_rcl,		op_rcr,
-	op_ret,		op_lret,	op_rol,		op_ror,		op_sahf,
+	op_pop,		op_popa,	op_popf,
+	op_push,	op_pusha,	op_pushf,
+	op_rcl,		op_rcr,
+	op_ret,		op_lret,
+	op_rol,		op_ror,		op_sahf,
 	op_sal,		op_shl,		op_sar,		op_sbb,
 	op_scas,	op_shr,		op_stc,		op_std,
 	op_sti,		op_stos,	op_sub,		op_test,
@@ -125,7 +130,6 @@ typedef enum {
 extern boolean is_opcode( component comp );
 extern boolean is_directive( component comp );
 extern boolean is_prefix( component comp );
-extern boolean is_reg_segment( component comp );
 extern boolean is_modifier( component comp );
 
 

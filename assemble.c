@@ -459,6 +459,12 @@ static boolean encode_rel( instruction *mc, constant_value *v, byte w, byte i, b
 			return( TRUE );
 		}
 		if( w == RANGE_BYTE ) {
+			/*
+			 *	We gete here if the encoding is *only* valid
+			 *	for a signed byte.  Encodings which can be either
+			 *	signed byte or signed word will fall through to
+			 *	the work encoding.
+			 */
 			log_error_i( "Displacement out of range (signed byte)", d );
 			return( FALSE );
 		}
@@ -1027,6 +1033,17 @@ boolean assemble_inst( opcode *inst, opcode_prefix prefs, ea_breakdown *arg, ins
 				DPRINT(( "Relative address conversion.\n" ));
 
 				if( !encode_rel( mc, v, REL_RANGE( e ), REL_INDEX( e ), REL_BIT( e ))) return( FALSE );
+				break;
+			}
+			case TER_ACT: {
+				ASSERT( TER_ARG( e ) < inst->args );
+				ASSERT( BOOL( arg[ TER_ARG( e )].ea & ( ea_byte_registers | ea_word_registers )));
+				ASSERT( BOOL( arg[ TER_ARG( e )].registers == 1 ));
+				ASSERT( BOOL( arg[ TER_ARG( e )].reg[ 0 ] != NIL( register_data )));
+
+				DPRINT(( "Test Register (Arg %d, Pass %d, Reg %d).\n", TER_ARG( w ), TER_PASS( w ), TER_REG( w )));
+
+				if( BOOL( arg[ TER_ARG( e )].reg[ 0 ]->reg_no == TER_REG( e )) != BOOL( TER_PASS( e ))) return( FALSE );
 				break;
 			}
 			case VDS_ACT: {

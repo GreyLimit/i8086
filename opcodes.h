@@ -459,6 +459,13 @@ typedef struct _opcode {
 #define DIRECT_TO_REG	1
 
 /*
+ *	Instructions making a test need to match the result specified
+ *	by one of the following values:
+ */
+#define MATCH_TRUE	1
+#define MATCH_FALSE	0
+
+/*
  *	Set Byte (Action 0)
  *
  *	Provide static data forming the basic for the machine
@@ -697,7 +704,31 @@ typedef struct _opcode {
 #define REL_BIT(w)	EXTRACT((w),REL_BIT_BITS,REL_BIT_LSB)
 
 /*
- *	Verify Data Size (Action 11)
+ *	TEst Register (Action 11)
+ *
+ *	Check that the argument specified is, (or is not) a specified
+ *	register.
+ *
+ *	TER(a,p,r)	a = Argument number of immediate data
+ *			p = condition result required to pass
+ *			r = register specification
+ */
+#define TER_ACT		13
+#define TER_ARG_LSB	0
+#define TER_ARG_BITS	3
+#define TER_PASS_LSB	3
+#define TER_PASS_BITS	1
+#define TER_REG_LSB	4
+#define TER_REG_BITS	3
+
+#define TER(a,p,r)	(ACT(TER_ACT)|VALUE((a),TER_ARG_BITS,TER_ARG_LSB)|VALUE((p),TER_PASS_BITS,TER_PASS_LSB)|VALUE((r),TER_REG_BITS,TER_REG_LSB))
+
+#define TER_ARG(w)	EXTRACT((w),TER_ARG_BITS,TER_ARG_LSB)
+#define TER_PASS(w)	EXTRACT((w),TER_PASS_BITS,TER_PASS_LSB)
+#define TER_REG(w)	EXTRACT((w),TER_REG_BITS,TER_REG_LSB)
+
+/*
+ *	Verify Data Size (Action 12)
  *
  *	Check that the argument specified has the compatible size
  *	configuration as the size data recorded in the constructed
@@ -705,7 +736,7 @@ typedef struct _opcode {
  *
  *	VDS(a)		a = Argument number of immediate data
  */
-#define VDS_ACT		11
+#define VDS_ACT		12
 #define VDS_ARG_LSB	0
 #define VDS_ARG_BITS	3
 
