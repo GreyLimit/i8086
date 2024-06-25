@@ -24,6 +24,34 @@ Encode the missing 286 instructions.
 Provide output to object files and executables.
 Reduce the assemblers final executable footprint such that an operational version can be created with the bounds of a ".com" executable: 64 KBytes.
 
+## Brief Usage
+
+To assemble a file call the assembler with options before the name of the assembler source code file.
+
+```
+Options:-
+	--ignore-keyword-case   Make keywords case insensitive
+	--ignore-label-case     Make labels case insensitive
+	--com                   Output a '.COM' executable
+	--exe                   Output a '.EXE' executable
+	--obj                   Output a '.OBJ' linkable file
+	--hex                   Output binary files in ASCII
+	--ascii                 Output binary files in ASCII
+	--listing               Produce detailed listing
+	--8086                  Only permit 8086 code
+	--8088                  Only permit 8088 code
+	--80186                 Only permit 80186 and earlier code
+	--80188                 Only permit 80188 and earlier code
+	--80286                 Only permit 80286 and earlier code
+	--access-segments       Permit assignment to segments
+	--position-dependent    Permit fixed/absolute position code
+	--version               Display program version details
+	--help                  Show this help
+	--dump-opcodes          Dump internal opcode table
+	--verbose               Show extra details during assembly
+	--very-verbose          Show even more detail
+```
+
 ## Revelations
 
 Perhaps a little late to point out the errors in "Programming the 8086 8088" (Sybex 1983), they are numerous, confusing and caused much head scratching.  The genuine Intel documents are, naturally, more reliable if not as easy to comprehend.  Worth noting though that the Intel book "iAPX86/88, 186/188 User's Manual, Programmer's Reference" has **evactly** the same formatting and layout as the earlier Sybex book "Programming the 8086 8088" (which is a far easier read than Intels own 8086 manual) but without the errors.
