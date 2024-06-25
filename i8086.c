@@ -79,6 +79,7 @@ static struct {
 	{ "--80286",			"Only permit 80286 and earlier code",	intel_80286,		flag_286	},
 	{ "--access-segments",		"Permit assignment to segments",	allow_segment_access,	flag_seg	},
 	{ "--position-dependent",	"Permit fixed/absolute position code",	allow_position_dependent,flag_abs	},
+	{ "--version",			"Display program version details",	show_version,		flag_none	},
 	{ "--help",			"Show this help",			show_help,		flag_none	},
 
 #ifdef VERIFICATION
@@ -111,6 +112,12 @@ static boolean process_flags( int *argc, char *argv[] ) {
 		else {
 			i++;
 		}
+	}
+	if( BOOL( command_flags & show_version )) {
+		printf( "Version details:-\n" );
+		printf( "    Version Number:   " PROGRAM_VERSION_NUMBER "\n" );
+		printf( "    Compilation Date: " __DATE__ "(" __TIME__ ")\n" );
+		exit( 0 );
 	}
 	if( BOOL( command_flags & show_help )) {
 		printf( "Options:-\n" );

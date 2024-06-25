@@ -9,6 +9,11 @@
 #define _CONSTANTS_H_
 
 /*
+ *	The programs overall version ID.
+ */
+#define PROGRAM_VERSION_NUMBER		"V0.1.0"
+
+/*
  *	Define an arbitary size limit on a numberical
  *	values' representation (not its value).  This
  *	if sized to enable a 16 bit binary value to

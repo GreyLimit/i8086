@@ -46,10 +46,10 @@
 
 /* Segment Registers */
 #define SEGMENT_REGISTERS	4
-#define REG_CS			0
-#define REG_DS			1
+#define REG_ES			0
+#define REG_CS			1
 #define REG_SS			2
-#define REG_ES			3
+#define REG_DS			3
 /*
  *	Special case handles outside the normal segment registers
  *	internal numbers.

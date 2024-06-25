@@ -618,7 +618,6 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 void dump_opcode_list( boolean show_more ) {
 	opcode		*op;
 	component	mods[ MAXIMUM_MODIFIERS ];
-	const char	*n;
 	char		opflags[ MAXIMUM_FLAGS ];
 	int		i;
 	instruction	mc;
@@ -632,7 +631,6 @@ void dump_opcode_list( boolean show_more ) {
 		/*
 		 *	Gather common elements of all instructions.
 		 */
-		n = component_text( op->op );
 		expand_mnemonic_flags( op->flags, opflags, MAXIMUM_FLAGS );
 		expand_modifier( op->mods, mods, MAXIMUM_MODIFIERS );
 		/*
@@ -677,6 +675,15 @@ void dump_opcode_list( boolean show_more ) {
 			}
 		}
 		/*
+		 * TODO:	The above tests (for 0,1 or 2 arguments) do not include any iteration
+		 *		through possible variations of the following elements:
+		 *
+		 * 		*	Segment over-rides (CS, DS, SS, ES)
+		 * 		*	argument Data sizing (byte ptr, word ptr, near far etc)
+		 *		*	whole instruction data sizing.
+		 *
+		 * ---------------------------------------------------------------------------------
+		 *
 		 *	boolean assemble_inst( op, no_prefix, ea_breakdown *arg, instruction *mc ) {}
 		 * 
 		 *	typedef struct _opcode {

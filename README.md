@@ -14,8 +14,12 @@ And it's still not finished.
 
 Within the limits of the x86 instructions so far encoded the assembler can *directly* generate DOS '.COM' executables (and by inference CP/M86 executables):  "Hello World!" has been written and executed.
 
-Support for object file creation (as input to a separate linker) has not been coded.
+All instructions present in the 8086/88 and 80186(88) have been encoded into the assembler though comprehensive validation and testing that these generate the correct machine instructions has not been attempted.
 
-Ongoing work on the '--dump-opcodes' option (enabled when compiled with VERIFICATION defined) has highlighted a range of errors thus proving how worth while this coding effort has been.
+Ongoing work on the '--dump-opcodes' option (enabled when compiled with VERIFICATION defined) has highlighted a range of errors thus proving how worth while this coding effort has been.  The object of this options is to display all of the instructions which the assembler will recognise providing a direct input to an external validation mechanism.
 
-As a by product it is possible to display all of the instructions which the assembler will recognise .. it's a long list.
+Support for object file creation (as input to a separate linker) nor direct '.exe' creation has not been coded.
+
+## Revelations
+
+Perhaps a little late to point out the errors in "Programming the 8086 8088" (Sybex 1983), they are numerous, confusing and caused much head scratching.  The genuine Intel documents are, naturally, more reliable if not as easy to comprehend.

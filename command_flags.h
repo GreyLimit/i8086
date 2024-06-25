@@ -56,12 +56,13 @@ typedef enum {
 	/*
 	 *	Misc options
 	 */
-	show_help			= 0010000,	/* Display help text */
-	be_verbose			= 0020000,	/* Make more noise while working */
-	more_verbose			= 0040000,	/* Display more details about internal ops. */
+	show_version			= 0010000,	/* Display version data */
+	show_help			= 0020000,	/* Display help text */
+	be_verbose			= 0040000,	/* Make more noise while working */
+	more_verbose			= 0100000,	/* Display more details about internal ops. */
 	
 #ifdef VERIFICATION
-	dump_opcodes			= 0100000,	/* Display the content of the opcode encoding table */
+	dump_opcodes			= 0200000,	/* Display the content of the opcode encoding table */
 #endif
 
 	/*
