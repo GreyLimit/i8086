@@ -1,7 +1,7 @@
 # i8086
 A (not so) simple minded x86 assembler primarily targeting 8086, 80186 and 80286 16-bit CPUs.
 
-Support for the 80286 is still missing, but intended.  Support for 32-bit CPUs is an aspirational objective, but not aprimary requirement.
+Support for the 80286 is still missing, but intended.  Support for 32-bit CPUs is an aspirational objective, but not a primary requirement.
 
 ## How did I get here?
 Having written (and sometimes) completed a number of assemblers for older CPUs the thought crossed my mind: Why not do an Intel 8086 assmbler, how hard can it be?
@@ -10,23 +10,28 @@ The answer is that (strangely reaffirming my opinions formed "back in the day" w
 
 ## Where is here (June '24)?
 
-All instructions present in the 8086/88 and 80186(88) have been encoded into the assembler though comprehensive validation and testing that these generate the correct machine instructions has not been attempted.
+All instructions present in the 8086/88 and 80186/88 have been encoded into the assembler though comprehensive validation and testing that these generate the correct machine instructions has **not** been attempted.
 
-The assembler can *directly* generate DOS '.COM' executables (and by inference CP/M86 executables):  "Hello World!" has been written and executed.
+The assembler can *directly* generate DOS '.com' executables (and by inference CP/M86 '.cmd' executables):  "Hello World!" has been written and executed.
 
-Ongoing work on the '--dump-opcodes' option (enabled when compiled with VERIFICATION defined) has highlighted a range of errors thus proving how worth while this coding effort has been.  The object of this options is to display all of the instructions which the assembler will recognise providing a direct input to an external validation mechanism.
+Ongoing work on the '--dump-opcodes' option (enabled when compiled with the VERIFICATION macro defined) highlighted a range of errors thus proving how worth while this coding effort has been.  The intended objective of this options is to display all of the instructions which the assembler will recognise in a format that could be the input to an external validation mechanism.
 
-The assembler contains the concepts of segments (associated with segment registers) and segments brought together forming a logical group (where all associated segemnt registers point to the same paragraph).  Support for object file creation (as input to a separate linker) nor direct '.exe' creation has not been coded.
+The assembler contains the concepts of segments (associated with segment registers) and segments brought together forming a logical group (where all associated segment registers point to the same paragraph).  Support for object file creation (as input to a separate linker) nor direct '.exe' creation has not been coded.
 
 ## Objectives from here
 
-Encode the missing 286 instructions.
-Provide output to object files and executables.
-Reduce the assemblers final executable footprint such that an operational version can be created with the bounds of a ".com" executable: 64 KBytes.
+* Encode the missing 286 instructions.
+* Provide output to object files and executables.  While, at the moment, the contemporary Intel document on formats for these files is being used as a guide, this might not be the end point of this work.
+* Reduce the assemblers final executable footprint such that an operational version can be created with the bounds of a '.com' executable: 64 KBytes.  A key focus on achieveing this go will be the reduction of non-essential static string data (i.e. error messages) through replacement of numerical equivalents.
 
 ## Brief Usage
 
-To assemble a file call the assembler with options before the name of the assembler source code file.
+To assemble a file call the assembler with options before the name of the assembler source code file:
+
+```
+      i8086 [{options}] {filename}
+```
+The available list of options can be displayed by running the command with '--help' as the only argument.  This will generate the following (or similar) output:
 
 ```
 Options:-
@@ -54,4 +59,4 @@ Options:-
 
 ## Revelations
 
-Perhaps a little late to point out the errors in "Programming the 8086 8088" (Sybex 1983), they are numerous, confusing and caused much head scratching.  The genuine Intel documents are, naturally, more reliable if not as easy to comprehend.  Worth noting though that the Intel book "iAPX86/88, 186/188 User's Manual, Programmer's Reference" has **evactly** the same formatting and layout as the earlier Sybex book "Programming the 8086 8088" (which is a far easier read than Intels own 8086 manual) but without the errors.
+Perhaps it is a little late chronologically to point out the errors in the book "Programming the 8086 8088" (Sybex 1983), they are numerous, confusing and caused much head scratching.  The genuine Intel documents are, naturally, more reliable if not as easy to comprehend.  Worth noting though that the Intel book "iAPX86/88, 186/188 User's Manual, Programmer's Reference" has **evactly** the same formatting and layout as the earlier Sybex book "Programming the 8086 8088" (which is a far easier read than Intels own 8086 manual) but without the errors.
