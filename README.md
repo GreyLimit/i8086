@@ -3,6 +3,12 @@ A (not so) simple minded x86 assembler primarily targeting 8086, 80186 and 80286
 
 Support for the 80286 is still missing, but intended.  Support for 32-bit CPUs is an aspirational objective, but not a primary requirement.
 
+## Disclaimer
+
+I absolutely **know** how inefficient some (many) of the algorithmic elements of this assembler are.  What these simplistic and slow systems provide is two benefits for this software at this point.  They are easy to prove (or more easily), visually, that they are correct and they tend to have a smaller memory foot print.  These benefits naturally come at the cost of CPU time when running the assembler, which isn't an practical issue on a modernish PC.
+
+This all being said, doesn't make it right.
+
 ## How did I get here?
 Having written (and sometimes) completed a number of assemblers for older CPUs the thought crossed my mind: Why not do an Intel 8086 assmbler, how hard can it be?
 
