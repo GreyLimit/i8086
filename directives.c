@@ -239,7 +239,8 @@ static boolean process_dir_reserve( int args, token_record **arg, int *len ) {
 }
 
 /*
- *	Define a set of binary BYTE values into the current segment
+ *	Force the current offset (in the current segment) to align
+ *	with either the numerical value or data modifier.
  *
  *		ALIGN	{expression}|{modifier}
  *
@@ -305,8 +306,8 @@ static boolean process_dir_align( int args, token_record **arg, int *len ) {
 	 */
 	if(( gap = this_segment->posn % alignment ) == 0 ) return( TRUE );
 	/*
-	 *	so we are not (by luck) on a suitable
-	 *	alignment, add in necessary space.
+	 *	so we are not on a suitable alignment, add in
+	 *	the necessary space.
 	 */
 	return( output_space( alignment - gap ));
 }

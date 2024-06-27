@@ -39,6 +39,7 @@ typedef enum {
 	flag_486	= 00020,	/* 80486 - not yet used */
 	flag_abs	= 00100,	/* Instruction is absolute, position specific */
 	flag_seg	= 00200,	/* Instruction modifies a segment register */
+	flag_priv	= 00400,	/* Instructions requires priviledged status */
 
 	/*
 	 *	Composite flags to simplify encoding.  The flags indicate

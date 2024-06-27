@@ -166,11 +166,23 @@ opcode_prefix map_prefix( component pref ) {
 /*
  *	Convert a segment register number into a prefix bitmap bit
  */
-static opcode_prefix segment_prefix_map[ SEGMENT_REGISTERS ] = { CS_prefix, DS_prefix, SS_prefix, ES_prefix };
+static struct {
+	byte		segreg;
+	opcode_prefix	prefix;
+} segment_prefix_map[ SEGMENT_REGISTERS ] = {
+	{ REG_CS,	CS_prefix },
+	{ REG_DS,	DS_prefix },
+	{ REG_SS,	SS_prefix },
+	{ REG_ES,	ES_prefix }
+};
 
 opcode_prefix map_segment_prefix( byte segment_reg ) {
 
-	if( segment_reg < SEGMENT_REGISTERS ) return( segment_prefix_map[ segment_reg ]);
+	ASSERT( SEGMENT_REGISTERS == 4 );
+
+	for( int i = 0; i < SEGMENT_REGISTERS; i++ )
+		if( segment_prefix_map[ i ].segreg == segment_reg )
+			return( segment_prefix_map[ i ].prefix );
 	return( no_prefix );
 }
 
@@ -274,11 +286,11 @@ static register_data component_eas[] = {
 	{ reg_ax,	ac_word_reg|ac_acc_reg,				REG_AX,		0,	0,	UNREQUIRED_SEG	},
 	{ reg_cx,	ac_word_reg,					REG_CX,		0,	0,	UNREQUIRED_SEG	},
 	{ reg_dx,	ac_word_reg,					REG_DX,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_bx,	ac_word_reg|ac_pointer_reg|ac_base_reg,		REG_BX,		B111,	B000,	REG_DS	},
-	{ reg_sp,	ac_word_reg,					REG_SP,		0,	0,	UNREQUIRED_SEG	},
-	{ reg_bp,	ac_word_reg|ac_pointer_reg|ac_base_reg,		REG_BP,		B110,	B010,	REG_SS	},
-	{ reg_si,	ac_word_reg|ac_pointer_reg|ac_index_reg,	REG_SI,		B100,	B000,	REG_DS	},
-	{ reg_di,	ac_word_reg|ac_pointer_reg|ac_index_reg,	REG_DI,		B101,	B001,	UNREQUIRED_SEG	},
+	{ reg_bx,	ac_word_reg|ac_pointer_reg|ac_base_reg,		REG_BX,		B111,	B000,	REG_DS		},
+	{ reg_sp,	ac_word_reg,					REG_SP,		0,	0,	REG_SS		},
+	{ reg_bp,	ac_word_reg|ac_pointer_reg|ac_base_reg,		REG_BP,		B110,	B010,	REG_SS		},
+	{ reg_si,	ac_word_reg|ac_pointer_reg|ac_index_reg,	REG_SI,		B100,	B000,	REG_DS		},
+	{ reg_di,	ac_word_reg|ac_pointer_reg|ac_index_reg,	REG_DI,		B101,	B001,	REG_ES		},
 	{ reg_cs,	ac_segment_reg,					REG_CS,		0,	0,	UNREQUIRED_SEG	},
 	{ reg_ds,	ac_segment_reg,					REG_DS,		0,	0,	UNREQUIRED_SEG	},
 	{ reg_ss,	ac_segment_reg,					REG_SS,		0,	0,	UNREQUIRED_SEG	},
@@ -302,13 +314,33 @@ register_data *register_component( component comp ) {
 
 
 /*
- *	Here be dragons (be warned)
+ *	The OPCODE Table
+ *	================
+ *
+ *	This is the table where *all* of the supported opcodes
+ *	are encoded in all their forms and argument combinations.
+ *
+ * 	The order of the entires within the table matters with
+ *	only the various entries for the same opcode nmeumonic.
+ *	These have been arranged such that the simplest machine
+ *	code interpretation of any given mneumonic is found ahead
+ *	of a functionally similar but more complex version.
+ *
+ *	In these CPUs there is often more than a single way of
+ *	getting the same result.
+ *
+ *	Some machine code instructions have multiple names.
+ *
+ *		Here be dragons (be warned)
  *
  *	If VERIFICATION is defined then this table is accessed
  *	by the "dump" module to facilitate confirmation of the
  *	tables content.
  *
- *	So, if not defined, then the data is static.
+ *	So, if not defined, then the data is static and is only
+ *	accessed by the "find_opcode()" routine.  This, however,
+ *	does return a pointer into the table, so the content is
+ *	not a secret to the rest of the program.
  */
 #ifndef VERIFICATION
 static
@@ -1418,6 +1450,139 @@ opcode opcodes[] = {
 /*B*/	{ op_xor,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_immediate },	5,	{ SB(0x80),IDS(0,SIGN_IGNORED),EAO(B000,0),IMM(1),SDS(0,0) }},
 /*A*/	{ op_xor,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_all_reg, ea_mod_reg_adrs },	6,	{ SB(0x30),SDR(DIRECT_TO_REG,0,1),IDS(0,SIGN_IGNORED),EA(0,1),SDS(0,0),VDS(1) }},
 /*A*/	{ op_xor,	flag_086,	lock_n_segments,	no_modifier,	2,	{ ea_mod_reg_adrs, ea_all_reg },	6,	{ SB(0x30),SDR(DIRECT_TO_EA,0,1),IDS(1,SIGN_IGNORED),EA(1,0),SDS(0,0),VDS(0) }},
+
+/*
+ * "80286 and 80287 Programmer's Reference Manula" (Intel 1987)
+ *
+ *	The following instructions are all of the additional 80286
+ *	instructions.  These all relate to the CPUs Protected Mode
+ *	providing a complete secure and virtualised environment
+ *	for a suitable operating system.
+ */
+
+/*----------------
+
+80286 Opcode expansions :-
+
+	rw: Word Register (AX, CX, DX, BX, SP, BP, SI, DI)
+
+	ew: A word-sized operand. This is either a word register or a (possibly indexed) word memory variable.
+	Either operand location may be encoded in the ModRM field. Any memory addressing mode may be used.
+
+		The above (rw,ew) combined make a full EA as outlined below.
+
+	/r: indicates that the ModR/M byte of the instruction contains both a register operand and
+	an rim operand.
+
+		This is a full, normal effective address combination.
+
+	/digit: (digit is between 0 and 7) indicates that the Mod R/M byte of the instruction uses
+	only the r/m (register or memory) operand. The reg field contains the digit that provides an
+	extension to the instruction's opcode.
+
+		This is the limited EA with embedded opcode version of an EA.
+
+---------------*/
+
+
+/*
+ *	ARPL - Adjust RPL Field of Selector
+ *	Opcode		Instruction	Clocks		Description
+ *	63 /r		ARPL ew,rw	10,mem=11	Adjust RPL of EA word not less than RPL of rw
+ */
+	{ op_arpl,	flag_286|flag_priv, no_prefix,		no_modifier,	2,	{ ea_mod_wreg_adrs, ea_word_registers }, 4,	{ SB(0x63),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EA(1,0),VDS(0) }},
+
+/*
+ *	CLTS - Clear Task Switched Flag
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 06		CLTS		2		Clear task switched flag
+ */
+	{ op_clts,	flag_286|flag_priv, no_prefix,		no_modifier,	0,	{ ea_empty, ea_empty },			2,	{ SB(0x0F),SB(0x06) }},
+
+/*
+ *	LAR - Load Access Rights Byte
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 02 /r	LAR rw,ew	14,mem=16	Load: high(rw)= Access Rights byte, selector ew
+ */
+	{ op_lar,	flag_286|flag_priv, no_prefix,		no_modifier,	2,	{ ea_word_registers, ea_mod_wreg_adrs }, 5,	{ SB(0x0F),SB(0x02),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EA(0,1),VDS(1) }},
+
+/*
+ *	LGDT LIDT - Load Global/Interrupt Descriptor Table Register
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 01 /2	LGDT m		11		Load m into Global Descriptor Table reg
+ *	0F 01 /3	LIDT m		12		Load m into Interrupt Descriptor Table reg
+ */
+	{ op_lgdt,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mem_mod_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x01),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B010,0) }},
+	{ op_lidt,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mem_mod_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x01),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B011,0) }},
+
+/*
+ *	LLDT - Load Local Descriptor Table Register
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 00 /2	LLDT ew		17,mem=19	Load selector ew into Local Descriptor Table register
+ */
+	{ op_lldt,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x00),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B010,0) }},
+
+/*
+ *	LMSW - Load Machine Status Word
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 01 /6	LMSW ew		3,mem=6		Load EA word into Machine Status Word
+ */
+	{ op_lmsw,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x01),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B110,0) }},
+
+/*
+ *	LSL - Load Segment Limit
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 03 /r	LSL rw,ew	14,mem=16	Load: rw = Segment Limit, selector ew
+ */
+	{ op_lsl,	flag_286|flag_priv, no_prefix,		no_modifier,	2,	{ ea_word_registers, ea_mod_wreg_adrs }, 5,	{ SB(0x0F),SB(0x03),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EA(0,1),VDS(1) }},
+
+/*
+ *	LTR - Load Task Register
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 00 /3	LTR ew		17,mem=19	Load EA word into Task Register
+ */
+	{ op_ltr,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x00),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B011,0) }},
+
+/*
+ *	SGDT / SIDT - Store Global/Interrupt Descriptor Table Register
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 01 /0	SGDT m		11		Store Global Descriptor Table register to m
+ *	0F 01 /1	SIDT m		12		Store Interrupt Descriptor Table register to m
+ */
+	{ op_sgdt,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mem_mod_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x01),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B000,0) }},
+	{ op_sidt,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mem_mod_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x01),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B001,0) }},
+
+/*
+ *	SLDT - Store Local Descriptor Table Register
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 00 /0	SLDT ew		2,mem=3		Store Local Descriptor Table register to EA word
+ */
+	{ op_sldt,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x00),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B000,0) }},
+
+/*
+ *	SMSW - Store Machine Status Word
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 01 /4	SMSW ew		2,mem=3		Store Machine Status Word to EA word
+ */
+	{ op_smsw,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x01),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B100,0) }},
+
+/*
+ *	STR - Store Task Register
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 00 /1	STR ew		2,mem=3		Store Task Register to EA word
+ */
+	{ op_str,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x00),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B001,0) }},
+
+/*
+ *	VERR / VERW - Verify a Segment for Reading or Writing
+ *	Opcode		Instruction	Clocks		Description
+ *	0F 00 /4	VERR ew		14,mem=16	Set ZF=1 if seg. can be read, selector ew
+ *	0F 00 /5	VERW ew		14,mem=16	Set ZF=1 if seg. can be written, selector ew
+ */
+	{ op_verr,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x00),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B100,0) }},
+	{ op_verw,	flag_286|flag_priv, no_prefix,		no_modifier,	1,	{ ea_mod_wreg_adrs, ea_empty },		4,	{ SB(0x0F),SB(0x00),FDS(DATA_SIZE_WORD,SIGN_IGNORED),EAO(B101,0) }},
+
+
 
 /*
  *	The End of the Op Codes Table.

@@ -14835,3 +14835,996 @@ D7             ;[0]	xlat
 31 6B DD       ;[0]	xor [bp+di+NN], bp
 31 73 DD       ;[0]	xor [bp+di+NN], si
 31 7B DD       ;[0]	xor [bp+di+NN], di
+               ; arpl, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, word_acc|word_reg, SB(val=$63), FDS(size=word,sign=ignore), EA(reg_arg=1,ea_arg=0), VDS(arg=0)
+63 C0          ;[2P]	arpl ax, ax
+63 C8          ;[2P]	arpl ax, cx
+63 D0          ;[2P]	arpl ax, dx
+63 D8          ;[2P]	arpl ax, bx
+63 E0          ;[2P]	arpl ax, sp
+63 E8          ;[2P]	arpl ax, bp
+63 F0          ;[2P]	arpl ax, si
+63 F8          ;[2P]	arpl ax, di
+63 C1          ;[2P]	arpl cx, ax
+63 C9          ;[2P]	arpl cx, cx
+63 D1          ;[2P]	arpl cx, dx
+63 D9          ;[2P]	arpl cx, bx
+63 E1          ;[2P]	arpl cx, sp
+63 E9          ;[2P]	arpl cx, bp
+63 F1          ;[2P]	arpl cx, si
+63 F9          ;[2P]	arpl cx, di
+63 C2          ;[2P]	arpl dx, ax
+63 CA          ;[2P]	arpl dx, cx
+63 D2          ;[2P]	arpl dx, dx
+63 DA          ;[2P]	arpl dx, bx
+63 E2          ;[2P]	arpl dx, sp
+63 EA          ;[2P]	arpl dx, bp
+63 F2          ;[2P]	arpl dx, si
+63 FA          ;[2P]	arpl dx, di
+63 C3          ;[2P]	arpl bx, ax
+63 CB          ;[2P]	arpl bx, cx
+63 D3          ;[2P]	arpl bx, dx
+63 DB          ;[2P]	arpl bx, bx
+63 E3          ;[2P]	arpl bx, sp
+63 EB          ;[2P]	arpl bx, bp
+63 F3          ;[2P]	arpl bx, si
+63 FB          ;[2P]	arpl bx, di
+63 C4          ;[2P]	arpl sp, ax
+63 CC          ;[2P]	arpl sp, cx
+63 D4          ;[2P]	arpl sp, dx
+63 DC          ;[2P]	arpl sp, bx
+63 E4          ;[2P]	arpl sp, sp
+63 EC          ;[2P]	arpl sp, bp
+63 F4          ;[2P]	arpl sp, si
+63 FC          ;[2P]	arpl sp, di
+63 C5          ;[2P]	arpl bp, ax
+63 CD          ;[2P]	arpl bp, cx
+63 D5          ;[2P]	arpl bp, dx
+63 DD          ;[2P]	arpl bp, bx
+63 E5          ;[2P]	arpl bp, sp
+63 ED          ;[2P]	arpl bp, bp
+63 F5          ;[2P]	arpl bp, si
+63 FD          ;[2P]	arpl bp, di
+63 C6          ;[2P]	arpl si, ax
+63 CE          ;[2P]	arpl si, cx
+63 D6          ;[2P]	arpl si, dx
+63 DE          ;[2P]	arpl si, bx
+63 E6          ;[2P]	arpl si, sp
+63 EE          ;[2P]	arpl si, bp
+63 F6          ;[2P]	arpl si, si
+63 FE          ;[2P]	arpl si, di
+63 C7          ;[2P]	arpl di, ax
+63 CF          ;[2P]	arpl di, cx
+63 D7          ;[2P]	arpl di, dx
+63 DF          ;[2P]	arpl di, bx
+63 E7          ;[2P]	arpl di, sp
+63 EF          ;[2P]	arpl di, bp
+63 F7          ;[2P]	arpl di, si
+63 FF          ;[2P]	arpl di, di
+63 06 AA AA    ;[2P]	arpl [+NN], ax
+63 0E AA AA    ;[2P]	arpl [+NN], cx
+63 16 AA AA    ;[2P]	arpl [+NN], dx
+63 1E AA AA    ;[2P]	arpl [+NN], bx
+63 26 AA AA    ;[2P]	arpl [+NN], sp
+63 2E AA AA    ;[2P]	arpl [+NN], bp
+63 36 AA AA    ;[2P]	arpl [+NN], si
+63 3E AA AA    ;[2P]	arpl [+NN], di
+63 07          ;[2P]	arpl [bx], ax
+63 0F          ;[2P]	arpl [bx], cx
+63 17          ;[2P]	arpl [bx], dx
+63 1F          ;[2P]	arpl [bx], bx
+63 27          ;[2P]	arpl [bx], sp
+63 2F          ;[2P]	arpl [bx], bp
+63 37          ;[2P]	arpl [bx], si
+63 3F          ;[2P]	arpl [bx], di
+63 04          ;[2P]	arpl [si], ax
+63 0C          ;[2P]	arpl [si], cx
+63 14          ;[2P]	arpl [si], dx
+63 1C          ;[2P]	arpl [si], bx
+63 24          ;[2P]	arpl [si], sp
+63 2C          ;[2P]	arpl [si], bp
+63 34          ;[2P]	arpl [si], si
+63 3C          ;[2P]	arpl [si], di
+63 05          ;[2P]	arpl [di], ax
+63 0D          ;[2P]	arpl [di], cx
+63 15          ;[2P]	arpl [di], dx
+63 1D          ;[2P]	arpl [di], bx
+63 25          ;[2P]	arpl [di], sp
+63 2D          ;[2P]	arpl [di], bp
+63 35          ;[2P]	arpl [di], si
+63 3D          ;[2P]	arpl [di], di
+63 47 DD       ;[2P]	arpl [bx+NN], ax
+63 4F DD       ;[2P]	arpl [bx+NN], cx
+63 57 DD       ;[2P]	arpl [bx+NN], dx
+63 5F DD       ;[2P]	arpl [bx+NN], bx
+63 67 DD       ;[2P]	arpl [bx+NN], sp
+63 6F DD       ;[2P]	arpl [bx+NN], bp
+63 77 DD       ;[2P]	arpl [bx+NN], si
+63 7F DD       ;[2P]	arpl [bx+NN], di
+63 47 DD       ;[2P]	arpl [bx+NN], ax
+63 4F DD       ;[2P]	arpl [bx+NN], cx
+63 57 DD       ;[2P]	arpl [bx+NN], dx
+63 5F DD       ;[2P]	arpl [bx+NN], bx
+63 67 DD       ;[2P]	arpl [bx+NN], sp
+63 6F DD       ;[2P]	arpl [bx+NN], bp
+63 77 DD       ;[2P]	arpl [bx+NN], si
+63 7F DD       ;[2P]	arpl [bx+NN], di
+63 46 DD       ;[2P]	arpl [bp+NN], ax
+63 4E DD       ;[2P]	arpl [bp+NN], cx
+63 56 DD       ;[2P]	arpl [bp+NN], dx
+63 5E DD       ;[2P]	arpl [bp+NN], bx
+63 66 DD       ;[2P]	arpl [bp+NN], sp
+63 6E DD       ;[2P]	arpl [bp+NN], bp
+63 76 DD       ;[2P]	arpl [bp+NN], si
+63 7E DD       ;[2P]	arpl [bp+NN], di
+63 46 DD       ;[2P]	arpl [bp+NN], ax
+63 4E DD       ;[2P]	arpl [bp+NN], cx
+63 56 DD       ;[2P]	arpl [bp+NN], dx
+63 5E DD       ;[2P]	arpl [bp+NN], bx
+63 66 DD       ;[2P]	arpl [bp+NN], sp
+63 6E DD       ;[2P]	arpl [bp+NN], bp
+63 76 DD       ;[2P]	arpl [bp+NN], si
+63 7E DD       ;[2P]	arpl [bp+NN], di
+63 44 DD       ;[2P]	arpl [si+NN], ax
+63 4C DD       ;[2P]	arpl [si+NN], cx
+63 54 DD       ;[2P]	arpl [si+NN], dx
+63 5C DD       ;[2P]	arpl [si+NN], bx
+63 64 DD       ;[2P]	arpl [si+NN], sp
+63 6C DD       ;[2P]	arpl [si+NN], bp
+63 74 DD       ;[2P]	arpl [si+NN], si
+63 7C DD       ;[2P]	arpl [si+NN], di
+63 44 DD       ;[2P]	arpl [si+NN], ax
+63 4C DD       ;[2P]	arpl [si+NN], cx
+63 54 DD       ;[2P]	arpl [si+NN], dx
+63 5C DD       ;[2P]	arpl [si+NN], bx
+63 64 DD       ;[2P]	arpl [si+NN], sp
+63 6C DD       ;[2P]	arpl [si+NN], bp
+63 74 DD       ;[2P]	arpl [si+NN], si
+63 7C DD       ;[2P]	arpl [si+NN], di
+63 45 DD       ;[2P]	arpl [di+NN], ax
+63 4D DD       ;[2P]	arpl [di+NN], cx
+63 55 DD       ;[2P]	arpl [di+NN], dx
+63 5D DD       ;[2P]	arpl [di+NN], bx
+63 65 DD       ;[2P]	arpl [di+NN], sp
+63 6D DD       ;[2P]	arpl [di+NN], bp
+63 75 DD       ;[2P]	arpl [di+NN], si
+63 7D DD       ;[2P]	arpl [di+NN], di
+63 45 DD       ;[2P]	arpl [di+NN], ax
+63 4D DD       ;[2P]	arpl [di+NN], cx
+63 55 DD       ;[2P]	arpl [di+NN], dx
+63 5D DD       ;[2P]	arpl [di+NN], bx
+63 65 DD       ;[2P]	arpl [di+NN], sp
+63 6D DD       ;[2P]	arpl [di+NN], bp
+63 75 DD       ;[2P]	arpl [di+NN], si
+63 7D DD       ;[2P]	arpl [di+NN], di
+63 40 DD       ;[2P]	arpl [bx+si+NN], ax
+63 48 DD       ;[2P]	arpl [bx+si+NN], cx
+63 50 DD       ;[2P]	arpl [bx+si+NN], dx
+63 58 DD       ;[2P]	arpl [bx+si+NN], bx
+63 60 DD       ;[2P]	arpl [bx+si+NN], sp
+63 68 DD       ;[2P]	arpl [bx+si+NN], bp
+63 70 DD       ;[2P]	arpl [bx+si+NN], si
+63 78 DD       ;[2P]	arpl [bx+si+NN], di
+63 40 DD       ;[2P]	arpl [bx+si+NN], ax
+63 48 DD       ;[2P]	arpl [bx+si+NN], cx
+63 50 DD       ;[2P]	arpl [bx+si+NN], dx
+63 58 DD       ;[2P]	arpl [bx+si+NN], bx
+63 60 DD       ;[2P]	arpl [bx+si+NN], sp
+63 68 DD       ;[2P]	arpl [bx+si+NN], bp
+63 70 DD       ;[2P]	arpl [bx+si+NN], si
+63 78 DD       ;[2P]	arpl [bx+si+NN], di
+63 42 DD       ;[2P]	arpl [bp+si+NN], ax
+63 4A DD       ;[2P]	arpl [bp+si+NN], cx
+63 52 DD       ;[2P]	arpl [bp+si+NN], dx
+63 5A DD       ;[2P]	arpl [bp+si+NN], bx
+63 62 DD       ;[2P]	arpl [bp+si+NN], sp
+63 6A DD       ;[2P]	arpl [bp+si+NN], bp
+63 72 DD       ;[2P]	arpl [bp+si+NN], si
+63 7A DD       ;[2P]	arpl [bp+si+NN], di
+63 42 DD       ;[2P]	arpl [bp+si+NN], ax
+63 4A DD       ;[2P]	arpl [bp+si+NN], cx
+63 52 DD       ;[2P]	arpl [bp+si+NN], dx
+63 5A DD       ;[2P]	arpl [bp+si+NN], bx
+63 62 DD       ;[2P]	arpl [bp+si+NN], sp
+63 6A DD       ;[2P]	arpl [bp+si+NN], bp
+63 72 DD       ;[2P]	arpl [bp+si+NN], si
+63 7A DD       ;[2P]	arpl [bp+si+NN], di
+63 41 DD       ;[2P]	arpl [bx+di+NN], ax
+63 49 DD       ;[2P]	arpl [bx+di+NN], cx
+63 51 DD       ;[2P]	arpl [bx+di+NN], dx
+63 59 DD       ;[2P]	arpl [bx+di+NN], bx
+63 61 DD       ;[2P]	arpl [bx+di+NN], sp
+63 69 DD       ;[2P]	arpl [bx+di+NN], bp
+63 71 DD       ;[2P]	arpl [bx+di+NN], si
+63 79 DD       ;[2P]	arpl [bx+di+NN], di
+63 41 DD       ;[2P]	arpl [bx+di+NN], ax
+63 49 DD       ;[2P]	arpl [bx+di+NN], cx
+63 51 DD       ;[2P]	arpl [bx+di+NN], dx
+63 59 DD       ;[2P]	arpl [bx+di+NN], bx
+63 61 DD       ;[2P]	arpl [bx+di+NN], sp
+63 69 DD       ;[2P]	arpl [bx+di+NN], bp
+63 71 DD       ;[2P]	arpl [bx+di+NN], si
+63 79 DD       ;[2P]	arpl [bx+di+NN], di
+63 43 DD       ;[2P]	arpl [bp+di+NN], ax
+63 4B DD       ;[2P]	arpl [bp+di+NN], cx
+63 53 DD       ;[2P]	arpl [bp+di+NN], dx
+63 5B DD       ;[2P]	arpl [bp+di+NN], bx
+63 63 DD       ;[2P]	arpl [bp+di+NN], sp
+63 6B DD       ;[2P]	arpl [bp+di+NN], bp
+63 73 DD       ;[2P]	arpl [bp+di+NN], si
+63 7B DD       ;[2P]	arpl [bp+di+NN], di
+63 43 DD       ;[2P]	arpl [bp+di+NN], ax
+63 4B DD       ;[2P]	arpl [bp+di+NN], cx
+63 53 DD       ;[2P]	arpl [bp+di+NN], dx
+63 5B DD       ;[2P]	arpl [bp+di+NN], bx
+63 63 DD       ;[2P]	arpl [bp+di+NN], sp
+63 6B DD       ;[2P]	arpl [bp+di+NN], bp
+63 73 DD       ;[2P]	arpl [bp+di+NN], si
+63 7B DD       ;[2P]	arpl [bp+di+NN], di
+               ; clts, , SB(val=$0F), SB(val=$06)
+0F 06          ;[2P]	clts 
+               ; lar, , word_acc|word_reg, word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$02), FDS(size=word,sign=ignore), EA(reg_arg=0,ea_arg=1), VDS(arg=1)
+0F 02 C0       ;[2P]	lar ax, ax
+0F 02 C1       ;[2P]	lar ax, cx
+0F 02 C2       ;[2P]	lar ax, dx
+0F 02 C3       ;[2P]	lar ax, bx
+0F 02 C4       ;[2P]	lar ax, sp
+0F 02 C5       ;[2P]	lar ax, bp
+0F 02 C6       ;[2P]	lar ax, si
+0F 02 C7       ;[2P]	lar ax, di
+0F 02 06 AA AA ;[2P]	lar ax, [+NN]
+0F 02 07       ;[2P]	lar ax, [bx]
+0F 02 04       ;[2P]	lar ax, [si]
+0F 02 05       ;[2P]	lar ax, [di]
+0F 02 47 DD    ;[2P]	lar ax, [bx+NN]
+0F 02 47 DD    ;[2P]	lar ax, [bx+NN]
+0F 02 46 DD    ;[2P]	lar ax, [bp+NN]
+0F 02 46 DD    ;[2P]	lar ax, [bp+NN]
+0F 02 44 DD    ;[2P]	lar ax, [si+NN]
+0F 02 44 DD    ;[2P]	lar ax, [si+NN]
+0F 02 45 DD    ;[2P]	lar ax, [di+NN]
+0F 02 45 DD    ;[2P]	lar ax, [di+NN]
+0F 02 40 DD    ;[2P]	lar ax, [bx+si+NN]
+0F 02 40 DD    ;[2P]	lar ax, [bx+si+NN]
+0F 02 42 DD    ;[2P]	lar ax, [bp+si+NN]
+0F 02 42 DD    ;[2P]	lar ax, [bp+si+NN]
+0F 02 41 DD    ;[2P]	lar ax, [bx+di+NN]
+0F 02 41 DD    ;[2P]	lar ax, [bx+di+NN]
+0F 02 43 DD    ;[2P]	lar ax, [bp+di+NN]
+0F 02 43 DD    ;[2P]	lar ax, [bp+di+NN]
+0F 02 C8       ;[2P]	lar cx, ax
+0F 02 C9       ;[2P]	lar cx, cx
+0F 02 CA       ;[2P]	lar cx, dx
+0F 02 CB       ;[2P]	lar cx, bx
+0F 02 CC       ;[2P]	lar cx, sp
+0F 02 CD       ;[2P]	lar cx, bp
+0F 02 CE       ;[2P]	lar cx, si
+0F 02 CF       ;[2P]	lar cx, di
+0F 02 0E AA AA ;[2P]	lar cx, [+NN]
+0F 02 0F       ;[2P]	lar cx, [bx]
+0F 02 0C       ;[2P]	lar cx, [si]
+0F 02 0D       ;[2P]	lar cx, [di]
+0F 02 4F DD    ;[2P]	lar cx, [bx+NN]
+0F 02 4F DD    ;[2P]	lar cx, [bx+NN]
+0F 02 4E DD    ;[2P]	lar cx, [bp+NN]
+0F 02 4E DD    ;[2P]	lar cx, [bp+NN]
+0F 02 4C DD    ;[2P]	lar cx, [si+NN]
+0F 02 4C DD    ;[2P]	lar cx, [si+NN]
+0F 02 4D DD    ;[2P]	lar cx, [di+NN]
+0F 02 4D DD    ;[2P]	lar cx, [di+NN]
+0F 02 48 DD    ;[2P]	lar cx, [bx+si+NN]
+0F 02 48 DD    ;[2P]	lar cx, [bx+si+NN]
+0F 02 4A DD    ;[2P]	lar cx, [bp+si+NN]
+0F 02 4A DD    ;[2P]	lar cx, [bp+si+NN]
+0F 02 49 DD    ;[2P]	lar cx, [bx+di+NN]
+0F 02 49 DD    ;[2P]	lar cx, [bx+di+NN]
+0F 02 4B DD    ;[2P]	lar cx, [bp+di+NN]
+0F 02 4B DD    ;[2P]	lar cx, [bp+di+NN]
+0F 02 D0       ;[2P]	lar dx, ax
+0F 02 D1       ;[2P]	lar dx, cx
+0F 02 D2       ;[2P]	lar dx, dx
+0F 02 D3       ;[2P]	lar dx, bx
+0F 02 D4       ;[2P]	lar dx, sp
+0F 02 D5       ;[2P]	lar dx, bp
+0F 02 D6       ;[2P]	lar dx, si
+0F 02 D7       ;[2P]	lar dx, di
+0F 02 16 AA AA ;[2P]	lar dx, [+NN]
+0F 02 17       ;[2P]	lar dx, [bx]
+0F 02 14       ;[2P]	lar dx, [si]
+0F 02 15       ;[2P]	lar dx, [di]
+0F 02 57 DD    ;[2P]	lar dx, [bx+NN]
+0F 02 57 DD    ;[2P]	lar dx, [bx+NN]
+0F 02 56 DD    ;[2P]	lar dx, [bp+NN]
+0F 02 56 DD    ;[2P]	lar dx, [bp+NN]
+0F 02 54 DD    ;[2P]	lar dx, [si+NN]
+0F 02 54 DD    ;[2P]	lar dx, [si+NN]
+0F 02 55 DD    ;[2P]	lar dx, [di+NN]
+0F 02 55 DD    ;[2P]	lar dx, [di+NN]
+0F 02 50 DD    ;[2P]	lar dx, [bx+si+NN]
+0F 02 50 DD    ;[2P]	lar dx, [bx+si+NN]
+0F 02 52 DD    ;[2P]	lar dx, [bp+si+NN]
+0F 02 52 DD    ;[2P]	lar dx, [bp+si+NN]
+0F 02 51 DD    ;[2P]	lar dx, [bx+di+NN]
+0F 02 51 DD    ;[2P]	lar dx, [bx+di+NN]
+0F 02 53 DD    ;[2P]	lar dx, [bp+di+NN]
+0F 02 53 DD    ;[2P]	lar dx, [bp+di+NN]
+0F 02 D8       ;[2P]	lar bx, ax
+0F 02 D9       ;[2P]	lar bx, cx
+0F 02 DA       ;[2P]	lar bx, dx
+0F 02 DB       ;[2P]	lar bx, bx
+0F 02 DC       ;[2P]	lar bx, sp
+0F 02 DD       ;[2P]	lar bx, bp
+0F 02 DE       ;[2P]	lar bx, si
+0F 02 DF       ;[2P]	lar bx, di
+0F 02 1E AA AA ;[2P]	lar bx, [+NN]
+0F 02 1F       ;[2P]	lar bx, [bx]
+0F 02 1C       ;[2P]	lar bx, [si]
+0F 02 1D       ;[2P]	lar bx, [di]
+0F 02 5F DD    ;[2P]	lar bx, [bx+NN]
+0F 02 5F DD    ;[2P]	lar bx, [bx+NN]
+0F 02 5E DD    ;[2P]	lar bx, [bp+NN]
+0F 02 5E DD    ;[2P]	lar bx, [bp+NN]
+0F 02 5C DD    ;[2P]	lar bx, [si+NN]
+0F 02 5C DD    ;[2P]	lar bx, [si+NN]
+0F 02 5D DD    ;[2P]	lar bx, [di+NN]
+0F 02 5D DD    ;[2P]	lar bx, [di+NN]
+0F 02 58 DD    ;[2P]	lar bx, [bx+si+NN]
+0F 02 58 DD    ;[2P]	lar bx, [bx+si+NN]
+0F 02 5A DD    ;[2P]	lar bx, [bp+si+NN]
+0F 02 5A DD    ;[2P]	lar bx, [bp+si+NN]
+0F 02 59 DD    ;[2P]	lar bx, [bx+di+NN]
+0F 02 59 DD    ;[2P]	lar bx, [bx+di+NN]
+0F 02 5B DD    ;[2P]	lar bx, [bp+di+NN]
+0F 02 5B DD    ;[2P]	lar bx, [bp+di+NN]
+0F 02 E0       ;[2P]	lar sp, ax
+0F 02 E1       ;[2P]	lar sp, cx
+0F 02 E2       ;[2P]	lar sp, dx
+0F 02 E3       ;[2P]	lar sp, bx
+0F 02 E4       ;[2P]	lar sp, sp
+0F 02 E5       ;[2P]	lar sp, bp
+0F 02 E6       ;[2P]	lar sp, si
+0F 02 E7       ;[2P]	lar sp, di
+0F 02 26 AA AA ;[2P]	lar sp, [+NN]
+0F 02 27       ;[2P]	lar sp, [bx]
+0F 02 24       ;[2P]	lar sp, [si]
+0F 02 25       ;[2P]	lar sp, [di]
+0F 02 67 DD    ;[2P]	lar sp, [bx+NN]
+0F 02 67 DD    ;[2P]	lar sp, [bx+NN]
+0F 02 66 DD    ;[2P]	lar sp, [bp+NN]
+0F 02 66 DD    ;[2P]	lar sp, [bp+NN]
+0F 02 64 DD    ;[2P]	lar sp, [si+NN]
+0F 02 64 DD    ;[2P]	lar sp, [si+NN]
+0F 02 65 DD    ;[2P]	lar sp, [di+NN]
+0F 02 65 DD    ;[2P]	lar sp, [di+NN]
+0F 02 60 DD    ;[2P]	lar sp, [bx+si+NN]
+0F 02 60 DD    ;[2P]	lar sp, [bx+si+NN]
+0F 02 62 DD    ;[2P]	lar sp, [bp+si+NN]
+0F 02 62 DD    ;[2P]	lar sp, [bp+si+NN]
+0F 02 61 DD    ;[2P]	lar sp, [bx+di+NN]
+0F 02 61 DD    ;[2P]	lar sp, [bx+di+NN]
+0F 02 63 DD    ;[2P]	lar sp, [bp+di+NN]
+0F 02 63 DD    ;[2P]	lar sp, [bp+di+NN]
+0F 02 E8       ;[2P]	lar bp, ax
+0F 02 E9       ;[2P]	lar bp, cx
+0F 02 EA       ;[2P]	lar bp, dx
+0F 02 EB       ;[2P]	lar bp, bx
+0F 02 EC       ;[2P]	lar bp, sp
+0F 02 ED       ;[2P]	lar bp, bp
+0F 02 EE       ;[2P]	lar bp, si
+0F 02 EF       ;[2P]	lar bp, di
+0F 02 2E AA AA ;[2P]	lar bp, [+NN]
+0F 02 2F       ;[2P]	lar bp, [bx]
+0F 02 2C       ;[2P]	lar bp, [si]
+0F 02 2D       ;[2P]	lar bp, [di]
+0F 02 6F DD    ;[2P]	lar bp, [bx+NN]
+0F 02 6F DD    ;[2P]	lar bp, [bx+NN]
+0F 02 6E DD    ;[2P]	lar bp, [bp+NN]
+0F 02 6E DD    ;[2P]	lar bp, [bp+NN]
+0F 02 6C DD    ;[2P]	lar bp, [si+NN]
+0F 02 6C DD    ;[2P]	lar bp, [si+NN]
+0F 02 6D DD    ;[2P]	lar bp, [di+NN]
+0F 02 6D DD    ;[2P]	lar bp, [di+NN]
+0F 02 68 DD    ;[2P]	lar bp, [bx+si+NN]
+0F 02 68 DD    ;[2P]	lar bp, [bx+si+NN]
+0F 02 6A DD    ;[2P]	lar bp, [bp+si+NN]
+0F 02 6A DD    ;[2P]	lar bp, [bp+si+NN]
+0F 02 69 DD    ;[2P]	lar bp, [bx+di+NN]
+0F 02 69 DD    ;[2P]	lar bp, [bx+di+NN]
+0F 02 6B DD    ;[2P]	lar bp, [bp+di+NN]
+0F 02 6B DD    ;[2P]	lar bp, [bp+di+NN]
+0F 02 F0       ;[2P]	lar si, ax
+0F 02 F1       ;[2P]	lar si, cx
+0F 02 F2       ;[2P]	lar si, dx
+0F 02 F3       ;[2P]	lar si, bx
+0F 02 F4       ;[2P]	lar si, sp
+0F 02 F5       ;[2P]	lar si, bp
+0F 02 F6       ;[2P]	lar si, si
+0F 02 F7       ;[2P]	lar si, di
+0F 02 36 AA AA ;[2P]	lar si, [+NN]
+0F 02 37       ;[2P]	lar si, [bx]
+0F 02 34       ;[2P]	lar si, [si]
+0F 02 35       ;[2P]	lar si, [di]
+0F 02 77 DD    ;[2P]	lar si, [bx+NN]
+0F 02 77 DD    ;[2P]	lar si, [bx+NN]
+0F 02 76 DD    ;[2P]	lar si, [bp+NN]
+0F 02 76 DD    ;[2P]	lar si, [bp+NN]
+0F 02 74 DD    ;[2P]	lar si, [si+NN]
+0F 02 74 DD    ;[2P]	lar si, [si+NN]
+0F 02 75 DD    ;[2P]	lar si, [di+NN]
+0F 02 75 DD    ;[2P]	lar si, [di+NN]
+0F 02 70 DD    ;[2P]	lar si, [bx+si+NN]
+0F 02 70 DD    ;[2P]	lar si, [bx+si+NN]
+0F 02 72 DD    ;[2P]	lar si, [bp+si+NN]
+0F 02 72 DD    ;[2P]	lar si, [bp+si+NN]
+0F 02 71 DD    ;[2P]	lar si, [bx+di+NN]
+0F 02 71 DD    ;[2P]	lar si, [bx+di+NN]
+0F 02 73 DD    ;[2P]	lar si, [bp+di+NN]
+0F 02 73 DD    ;[2P]	lar si, [bp+di+NN]
+0F 02 F8       ;[2P]	lar di, ax
+0F 02 F9       ;[2P]	lar di, cx
+0F 02 FA       ;[2P]	lar di, dx
+0F 02 FB       ;[2P]	lar di, bx
+0F 02 FC       ;[2P]	lar di, sp
+0F 02 FD       ;[2P]	lar di, bp
+0F 02 FE       ;[2P]	lar di, si
+0F 02 FF       ;[2P]	lar di, di
+0F 02 3E AA AA ;[2P]	lar di, [+NN]
+0F 02 3F       ;[2P]	lar di, [bx]
+0F 02 3C       ;[2P]	lar di, [si]
+0F 02 3D       ;[2P]	lar di, [di]
+0F 02 7F DD    ;[2P]	lar di, [bx+NN]
+0F 02 7F DD    ;[2P]	lar di, [bx+NN]
+0F 02 7E DD    ;[2P]	lar di, [bp+NN]
+0F 02 7E DD    ;[2P]	lar di, [bp+NN]
+0F 02 7C DD    ;[2P]	lar di, [si+NN]
+0F 02 7C DD    ;[2P]	lar di, [si+NN]
+0F 02 7D DD    ;[2P]	lar di, [di+NN]
+0F 02 7D DD    ;[2P]	lar di, [di+NN]
+0F 02 78 DD    ;[2P]	lar di, [bx+si+NN]
+0F 02 78 DD    ;[2P]	lar di, [bx+si+NN]
+0F 02 7A DD    ;[2P]	lar di, [bp+si+NN]
+0F 02 7A DD    ;[2P]	lar di, [bp+si+NN]
+0F 02 79 DD    ;[2P]	lar di, [bx+di+NN]
+0F 02 79 DD    ;[2P]	lar di, [bx+di+NN]
+0F 02 7B DD    ;[2P]	lar di, [bp+di+NN]
+0F 02 7B DD    ;[2P]	lar di, [bp+di+NN]
+               ; lgdt, , indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$01), FDS(size=word,sign=ignore), EAO(opcode=%010,ea_arg=0)
+0F 01 16 AA AA ;[2P]	lgdt [+NN]
+0F 01 17       ;[2P]	lgdt [bx]
+0F 01 14       ;[2P]	lgdt [si]
+0F 01 15       ;[2P]	lgdt [di]
+0F 01 57 DD    ;[2P]	lgdt [bx+NN]
+0F 01 57 DD    ;[2P]	lgdt [bx+NN]
+0F 01 56 DD    ;[2P]	lgdt [bp+NN]
+0F 01 56 DD    ;[2P]	lgdt [bp+NN]
+0F 01 54 DD    ;[2P]	lgdt [si+NN]
+0F 01 54 DD    ;[2P]	lgdt [si+NN]
+0F 01 55 DD    ;[2P]	lgdt [di+NN]
+0F 01 55 DD    ;[2P]	lgdt [di+NN]
+0F 01 50 DD    ;[2P]	lgdt [bx+si+NN]
+0F 01 50 DD    ;[2P]	lgdt [bx+si+NN]
+0F 01 52 DD    ;[2P]	lgdt [bp+si+NN]
+0F 01 52 DD    ;[2P]	lgdt [bp+si+NN]
+0F 01 51 DD    ;[2P]	lgdt [bx+di+NN]
+0F 01 51 DD    ;[2P]	lgdt [bx+di+NN]
+0F 01 53 DD    ;[2P]	lgdt [bp+di+NN]
+0F 01 53 DD    ;[2P]	lgdt [bp+di+NN]
+               ; lidt, , indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$01), FDS(size=word,sign=ignore), EAO(opcode=%011,ea_arg=0)
+0F 01 1E AA AA ;[2P]	lidt [+NN]
+0F 01 1F       ;[2P]	lidt [bx]
+0F 01 1C       ;[2P]	lidt [si]
+0F 01 1D       ;[2P]	lidt [di]
+0F 01 5F DD    ;[2P]	lidt [bx+NN]
+0F 01 5F DD    ;[2P]	lidt [bx+NN]
+0F 01 5E DD    ;[2P]	lidt [bp+NN]
+0F 01 5E DD    ;[2P]	lidt [bp+NN]
+0F 01 5C DD    ;[2P]	lidt [si+NN]
+0F 01 5C DD    ;[2P]	lidt [si+NN]
+0F 01 5D DD    ;[2P]	lidt [di+NN]
+0F 01 5D DD    ;[2P]	lidt [di+NN]
+0F 01 58 DD    ;[2P]	lidt [bx+si+NN]
+0F 01 58 DD    ;[2P]	lidt [bx+si+NN]
+0F 01 5A DD    ;[2P]	lidt [bp+si+NN]
+0F 01 5A DD    ;[2P]	lidt [bp+si+NN]
+0F 01 59 DD    ;[2P]	lidt [bx+di+NN]
+0F 01 59 DD    ;[2P]	lidt [bx+di+NN]
+0F 01 5B DD    ;[2P]	lidt [bp+di+NN]
+0F 01 5B DD    ;[2P]	lidt [bp+di+NN]
+               ; lldt, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$00), FDS(size=word,sign=ignore), EAO(opcode=%010,ea_arg=0)
+0F 00 D0       ;[2P]	lldt ax
+0F 00 D1       ;[2P]	lldt cx
+0F 00 D2       ;[2P]	lldt dx
+0F 00 D3       ;[2P]	lldt bx
+0F 00 D4       ;[2P]	lldt sp
+0F 00 D5       ;[2P]	lldt bp
+0F 00 D6       ;[2P]	lldt si
+0F 00 D7       ;[2P]	lldt di
+0F 00 16 AA AA ;[2P]	lldt [+NN]
+0F 00 17       ;[2P]	lldt [bx]
+0F 00 14       ;[2P]	lldt [si]
+0F 00 15       ;[2P]	lldt [di]
+0F 00 57 DD    ;[2P]	lldt [bx+NN]
+0F 00 57 DD    ;[2P]	lldt [bx+NN]
+0F 00 56 DD    ;[2P]	lldt [bp+NN]
+0F 00 56 DD    ;[2P]	lldt [bp+NN]
+0F 00 54 DD    ;[2P]	lldt [si+NN]
+0F 00 54 DD    ;[2P]	lldt [si+NN]
+0F 00 55 DD    ;[2P]	lldt [di+NN]
+0F 00 55 DD    ;[2P]	lldt [di+NN]
+0F 00 50 DD    ;[2P]	lldt [bx+si+NN]
+0F 00 50 DD    ;[2P]	lldt [bx+si+NN]
+0F 00 52 DD    ;[2P]	lldt [bp+si+NN]
+0F 00 52 DD    ;[2P]	lldt [bp+si+NN]
+0F 00 51 DD    ;[2P]	lldt [bx+di+NN]
+0F 00 51 DD    ;[2P]	lldt [bx+di+NN]
+0F 00 53 DD    ;[2P]	lldt [bp+di+NN]
+0F 00 53 DD    ;[2P]	lldt [bp+di+NN]
+               ; lmsw, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$01), FDS(size=word,sign=ignore), EAO(opcode=%110,ea_arg=0)
+0F 01 F0       ;[2P]	lmsw ax
+0F 01 F1       ;[2P]	lmsw cx
+0F 01 F2       ;[2P]	lmsw dx
+0F 01 F3       ;[2P]	lmsw bx
+0F 01 F4       ;[2P]	lmsw sp
+0F 01 F5       ;[2P]	lmsw bp
+0F 01 F6       ;[2P]	lmsw si
+0F 01 F7       ;[2P]	lmsw di
+0F 01 36 AA AA ;[2P]	lmsw [+NN]
+0F 01 37       ;[2P]	lmsw [bx]
+0F 01 34       ;[2P]	lmsw [si]
+0F 01 35       ;[2P]	lmsw [di]
+0F 01 77 DD    ;[2P]	lmsw [bx+NN]
+0F 01 77 DD    ;[2P]	lmsw [bx+NN]
+0F 01 76 DD    ;[2P]	lmsw [bp+NN]
+0F 01 76 DD    ;[2P]	lmsw [bp+NN]
+0F 01 74 DD    ;[2P]	lmsw [si+NN]
+0F 01 74 DD    ;[2P]	lmsw [si+NN]
+0F 01 75 DD    ;[2P]	lmsw [di+NN]
+0F 01 75 DD    ;[2P]	lmsw [di+NN]
+0F 01 70 DD    ;[2P]	lmsw [bx+si+NN]
+0F 01 70 DD    ;[2P]	lmsw [bx+si+NN]
+0F 01 72 DD    ;[2P]	lmsw [bp+si+NN]
+0F 01 72 DD    ;[2P]	lmsw [bp+si+NN]
+0F 01 71 DD    ;[2P]	lmsw [bx+di+NN]
+0F 01 71 DD    ;[2P]	lmsw [bx+di+NN]
+0F 01 73 DD    ;[2P]	lmsw [bp+di+NN]
+0F 01 73 DD    ;[2P]	lmsw [bp+di+NN]
+               ; lsl, , word_acc|word_reg, word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$03), FDS(size=word,sign=ignore), EA(reg_arg=0,ea_arg=1), VDS(arg=1)
+0F 03 C0       ;[2P]	lsl ax, ax
+0F 03 C1       ;[2P]	lsl ax, cx
+0F 03 C2       ;[2P]	lsl ax, dx
+0F 03 C3       ;[2P]	lsl ax, bx
+0F 03 C4       ;[2P]	lsl ax, sp
+0F 03 C5       ;[2P]	lsl ax, bp
+0F 03 C6       ;[2P]	lsl ax, si
+0F 03 C7       ;[2P]	lsl ax, di
+0F 03 06 AA AA ;[2P]	lsl ax, [+NN]
+0F 03 07       ;[2P]	lsl ax, [bx]
+0F 03 04       ;[2P]	lsl ax, [si]
+0F 03 05       ;[2P]	lsl ax, [di]
+0F 03 47 DD    ;[2P]	lsl ax, [bx+NN]
+0F 03 47 DD    ;[2P]	lsl ax, [bx+NN]
+0F 03 46 DD    ;[2P]	lsl ax, [bp+NN]
+0F 03 46 DD    ;[2P]	lsl ax, [bp+NN]
+0F 03 44 DD    ;[2P]	lsl ax, [si+NN]
+0F 03 44 DD    ;[2P]	lsl ax, [si+NN]
+0F 03 45 DD    ;[2P]	lsl ax, [di+NN]
+0F 03 45 DD    ;[2P]	lsl ax, [di+NN]
+0F 03 40 DD    ;[2P]	lsl ax, [bx+si+NN]
+0F 03 40 DD    ;[2P]	lsl ax, [bx+si+NN]
+0F 03 42 DD    ;[2P]	lsl ax, [bp+si+NN]
+0F 03 42 DD    ;[2P]	lsl ax, [bp+si+NN]
+0F 03 41 DD    ;[2P]	lsl ax, [bx+di+NN]
+0F 03 41 DD    ;[2P]	lsl ax, [bx+di+NN]
+0F 03 43 DD    ;[2P]	lsl ax, [bp+di+NN]
+0F 03 43 DD    ;[2P]	lsl ax, [bp+di+NN]
+0F 03 C8       ;[2P]	lsl cx, ax
+0F 03 C9       ;[2P]	lsl cx, cx
+0F 03 CA       ;[2P]	lsl cx, dx
+0F 03 CB       ;[2P]	lsl cx, bx
+0F 03 CC       ;[2P]	lsl cx, sp
+0F 03 CD       ;[2P]	lsl cx, bp
+0F 03 CE       ;[2P]	lsl cx, si
+0F 03 CF       ;[2P]	lsl cx, di
+0F 03 0E AA AA ;[2P]	lsl cx, [+NN]
+0F 03 0F       ;[2P]	lsl cx, [bx]
+0F 03 0C       ;[2P]	lsl cx, [si]
+0F 03 0D       ;[2P]	lsl cx, [di]
+0F 03 4F DD    ;[2P]	lsl cx, [bx+NN]
+0F 03 4F DD    ;[2P]	lsl cx, [bx+NN]
+0F 03 4E DD    ;[2P]	lsl cx, [bp+NN]
+0F 03 4E DD    ;[2P]	lsl cx, [bp+NN]
+0F 03 4C DD    ;[2P]	lsl cx, [si+NN]
+0F 03 4C DD    ;[2P]	lsl cx, [si+NN]
+0F 03 4D DD    ;[2P]	lsl cx, [di+NN]
+0F 03 4D DD    ;[2P]	lsl cx, [di+NN]
+0F 03 48 DD    ;[2P]	lsl cx, [bx+si+NN]
+0F 03 48 DD    ;[2P]	lsl cx, [bx+si+NN]
+0F 03 4A DD    ;[2P]	lsl cx, [bp+si+NN]
+0F 03 4A DD    ;[2P]	lsl cx, [bp+si+NN]
+0F 03 49 DD    ;[2P]	lsl cx, [bx+di+NN]
+0F 03 49 DD    ;[2P]	lsl cx, [bx+di+NN]
+0F 03 4B DD    ;[2P]	lsl cx, [bp+di+NN]
+0F 03 4B DD    ;[2P]	lsl cx, [bp+di+NN]
+0F 03 D0       ;[2P]	lsl dx, ax
+0F 03 D1       ;[2P]	lsl dx, cx
+0F 03 D2       ;[2P]	lsl dx, dx
+0F 03 D3       ;[2P]	lsl dx, bx
+0F 03 D4       ;[2P]	lsl dx, sp
+0F 03 D5       ;[2P]	lsl dx, bp
+0F 03 D6       ;[2P]	lsl dx, si
+0F 03 D7       ;[2P]	lsl dx, di
+0F 03 16 AA AA ;[2P]	lsl dx, [+NN]
+0F 03 17       ;[2P]	lsl dx, [bx]
+0F 03 14       ;[2P]	lsl dx, [si]
+0F 03 15       ;[2P]	lsl dx, [di]
+0F 03 57 DD    ;[2P]	lsl dx, [bx+NN]
+0F 03 57 DD    ;[2P]	lsl dx, [bx+NN]
+0F 03 56 DD    ;[2P]	lsl dx, [bp+NN]
+0F 03 56 DD    ;[2P]	lsl dx, [bp+NN]
+0F 03 54 DD    ;[2P]	lsl dx, [si+NN]
+0F 03 54 DD    ;[2P]	lsl dx, [si+NN]
+0F 03 55 DD    ;[2P]	lsl dx, [di+NN]
+0F 03 55 DD    ;[2P]	lsl dx, [di+NN]
+0F 03 50 DD    ;[2P]	lsl dx, [bx+si+NN]
+0F 03 50 DD    ;[2P]	lsl dx, [bx+si+NN]
+0F 03 52 DD    ;[2P]	lsl dx, [bp+si+NN]
+0F 03 52 DD    ;[2P]	lsl dx, [bp+si+NN]
+0F 03 51 DD    ;[2P]	lsl dx, [bx+di+NN]
+0F 03 51 DD    ;[2P]	lsl dx, [bx+di+NN]
+0F 03 53 DD    ;[2P]	lsl dx, [bp+di+NN]
+0F 03 53 DD    ;[2P]	lsl dx, [bp+di+NN]
+0F 03 D8       ;[2P]	lsl bx, ax
+0F 03 D9       ;[2P]	lsl bx, cx
+0F 03 DA       ;[2P]	lsl bx, dx
+0F 03 DB       ;[2P]	lsl bx, bx
+0F 03 DC       ;[2P]	lsl bx, sp
+0F 03 DD       ;[2P]	lsl bx, bp
+0F 03 DE       ;[2P]	lsl bx, si
+0F 03 DF       ;[2P]	lsl bx, di
+0F 03 1E AA AA ;[2P]	lsl bx, [+NN]
+0F 03 1F       ;[2P]	lsl bx, [bx]
+0F 03 1C       ;[2P]	lsl bx, [si]
+0F 03 1D       ;[2P]	lsl bx, [di]
+0F 03 5F DD    ;[2P]	lsl bx, [bx+NN]
+0F 03 5F DD    ;[2P]	lsl bx, [bx+NN]
+0F 03 5E DD    ;[2P]	lsl bx, [bp+NN]
+0F 03 5E DD    ;[2P]	lsl bx, [bp+NN]
+0F 03 5C DD    ;[2P]	lsl bx, [si+NN]
+0F 03 5C DD    ;[2P]	lsl bx, [si+NN]
+0F 03 5D DD    ;[2P]	lsl bx, [di+NN]
+0F 03 5D DD    ;[2P]	lsl bx, [di+NN]
+0F 03 58 DD    ;[2P]	lsl bx, [bx+si+NN]
+0F 03 58 DD    ;[2P]	lsl bx, [bx+si+NN]
+0F 03 5A DD    ;[2P]	lsl bx, [bp+si+NN]
+0F 03 5A DD    ;[2P]	lsl bx, [bp+si+NN]
+0F 03 59 DD    ;[2P]	lsl bx, [bx+di+NN]
+0F 03 59 DD    ;[2P]	lsl bx, [bx+di+NN]
+0F 03 5B DD    ;[2P]	lsl bx, [bp+di+NN]
+0F 03 5B DD    ;[2P]	lsl bx, [bp+di+NN]
+0F 03 E0       ;[2P]	lsl sp, ax
+0F 03 E1       ;[2P]	lsl sp, cx
+0F 03 E2       ;[2P]	lsl sp, dx
+0F 03 E3       ;[2P]	lsl sp, bx
+0F 03 E4       ;[2P]	lsl sp, sp
+0F 03 E5       ;[2P]	lsl sp, bp
+0F 03 E6       ;[2P]	lsl sp, si
+0F 03 E7       ;[2P]	lsl sp, di
+0F 03 26 AA AA ;[2P]	lsl sp, [+NN]
+0F 03 27       ;[2P]	lsl sp, [bx]
+0F 03 24       ;[2P]	lsl sp, [si]
+0F 03 25       ;[2P]	lsl sp, [di]
+0F 03 67 DD    ;[2P]	lsl sp, [bx+NN]
+0F 03 67 DD    ;[2P]	lsl sp, [bx+NN]
+0F 03 66 DD    ;[2P]	lsl sp, [bp+NN]
+0F 03 66 DD    ;[2P]	lsl sp, [bp+NN]
+0F 03 64 DD    ;[2P]	lsl sp, [si+NN]
+0F 03 64 DD    ;[2P]	lsl sp, [si+NN]
+0F 03 65 DD    ;[2P]	lsl sp, [di+NN]
+0F 03 65 DD    ;[2P]	lsl sp, [di+NN]
+0F 03 60 DD    ;[2P]	lsl sp, [bx+si+NN]
+0F 03 60 DD    ;[2P]	lsl sp, [bx+si+NN]
+0F 03 62 DD    ;[2P]	lsl sp, [bp+si+NN]
+0F 03 62 DD    ;[2P]	lsl sp, [bp+si+NN]
+0F 03 61 DD    ;[2P]	lsl sp, [bx+di+NN]
+0F 03 61 DD    ;[2P]	lsl sp, [bx+di+NN]
+0F 03 63 DD    ;[2P]	lsl sp, [bp+di+NN]
+0F 03 63 DD    ;[2P]	lsl sp, [bp+di+NN]
+0F 03 E8       ;[2P]	lsl bp, ax
+0F 03 E9       ;[2P]	lsl bp, cx
+0F 03 EA       ;[2P]	lsl bp, dx
+0F 03 EB       ;[2P]	lsl bp, bx
+0F 03 EC       ;[2P]	lsl bp, sp
+0F 03 ED       ;[2P]	lsl bp, bp
+0F 03 EE       ;[2P]	lsl bp, si
+0F 03 EF       ;[2P]	lsl bp, di
+0F 03 2E AA AA ;[2P]	lsl bp, [+NN]
+0F 03 2F       ;[2P]	lsl bp, [bx]
+0F 03 2C       ;[2P]	lsl bp, [si]
+0F 03 2D       ;[2P]	lsl bp, [di]
+0F 03 6F DD    ;[2P]	lsl bp, [bx+NN]
+0F 03 6F DD    ;[2P]	lsl bp, [bx+NN]
+0F 03 6E DD    ;[2P]	lsl bp, [bp+NN]
+0F 03 6E DD    ;[2P]	lsl bp, [bp+NN]
+0F 03 6C DD    ;[2P]	lsl bp, [si+NN]
+0F 03 6C DD    ;[2P]	lsl bp, [si+NN]
+0F 03 6D DD    ;[2P]	lsl bp, [di+NN]
+0F 03 6D DD    ;[2P]	lsl bp, [di+NN]
+0F 03 68 DD    ;[2P]	lsl bp, [bx+si+NN]
+0F 03 68 DD    ;[2P]	lsl bp, [bx+si+NN]
+0F 03 6A DD    ;[2P]	lsl bp, [bp+si+NN]
+0F 03 6A DD    ;[2P]	lsl bp, [bp+si+NN]
+0F 03 69 DD    ;[2P]	lsl bp, [bx+di+NN]
+0F 03 69 DD    ;[2P]	lsl bp, [bx+di+NN]
+0F 03 6B DD    ;[2P]	lsl bp, [bp+di+NN]
+0F 03 6B DD    ;[2P]	lsl bp, [bp+di+NN]
+0F 03 F0       ;[2P]	lsl si, ax
+0F 03 F1       ;[2P]	lsl si, cx
+0F 03 F2       ;[2P]	lsl si, dx
+0F 03 F3       ;[2P]	lsl si, bx
+0F 03 F4       ;[2P]	lsl si, sp
+0F 03 F5       ;[2P]	lsl si, bp
+0F 03 F6       ;[2P]	lsl si, si
+0F 03 F7       ;[2P]	lsl si, di
+0F 03 36 AA AA ;[2P]	lsl si, [+NN]
+0F 03 37       ;[2P]	lsl si, [bx]
+0F 03 34       ;[2P]	lsl si, [si]
+0F 03 35       ;[2P]	lsl si, [di]
+0F 03 77 DD    ;[2P]	lsl si, [bx+NN]
+0F 03 77 DD    ;[2P]	lsl si, [bx+NN]
+0F 03 76 DD    ;[2P]	lsl si, [bp+NN]
+0F 03 76 DD    ;[2P]	lsl si, [bp+NN]
+0F 03 74 DD    ;[2P]	lsl si, [si+NN]
+0F 03 74 DD    ;[2P]	lsl si, [si+NN]
+0F 03 75 DD    ;[2P]	lsl si, [di+NN]
+0F 03 75 DD    ;[2P]	lsl si, [di+NN]
+0F 03 70 DD    ;[2P]	lsl si, [bx+si+NN]
+0F 03 70 DD    ;[2P]	lsl si, [bx+si+NN]
+0F 03 72 DD    ;[2P]	lsl si, [bp+si+NN]
+0F 03 72 DD    ;[2P]	lsl si, [bp+si+NN]
+0F 03 71 DD    ;[2P]	lsl si, [bx+di+NN]
+0F 03 71 DD    ;[2P]	lsl si, [bx+di+NN]
+0F 03 73 DD    ;[2P]	lsl si, [bp+di+NN]
+0F 03 73 DD    ;[2P]	lsl si, [bp+di+NN]
+0F 03 F8       ;[2P]	lsl di, ax
+0F 03 F9       ;[2P]	lsl di, cx
+0F 03 FA       ;[2P]	lsl di, dx
+0F 03 FB       ;[2P]	lsl di, bx
+0F 03 FC       ;[2P]	lsl di, sp
+0F 03 FD       ;[2P]	lsl di, bp
+0F 03 FE       ;[2P]	lsl di, si
+0F 03 FF       ;[2P]	lsl di, di
+0F 03 3E AA AA ;[2P]	lsl di, [+NN]
+0F 03 3F       ;[2P]	lsl di, [bx]
+0F 03 3C       ;[2P]	lsl di, [si]
+0F 03 3D       ;[2P]	lsl di, [di]
+0F 03 7F DD    ;[2P]	lsl di, [bx+NN]
+0F 03 7F DD    ;[2P]	lsl di, [bx+NN]
+0F 03 7E DD    ;[2P]	lsl di, [bp+NN]
+0F 03 7E DD    ;[2P]	lsl di, [bp+NN]
+0F 03 7C DD    ;[2P]	lsl di, [si+NN]
+0F 03 7C DD    ;[2P]	lsl di, [si+NN]
+0F 03 7D DD    ;[2P]	lsl di, [di+NN]
+0F 03 7D DD    ;[2P]	lsl di, [di+NN]
+0F 03 78 DD    ;[2P]	lsl di, [bx+si+NN]
+0F 03 78 DD    ;[2P]	lsl di, [bx+si+NN]
+0F 03 7A DD    ;[2P]	lsl di, [bp+si+NN]
+0F 03 7A DD    ;[2P]	lsl di, [bp+si+NN]
+0F 03 79 DD    ;[2P]	lsl di, [bx+di+NN]
+0F 03 79 DD    ;[2P]	lsl di, [bx+di+NN]
+0F 03 7B DD    ;[2P]	lsl di, [bp+di+NN]
+0F 03 7B DD    ;[2P]	lsl di, [bp+di+NN]
+               ; ltr, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$00), FDS(size=word,sign=ignore), EAO(opcode=%011,ea_arg=0)
+0F 00 D8       ;[2P]	ltr ax
+0F 00 D9       ;[2P]	ltr cx
+0F 00 DA       ;[2P]	ltr dx
+0F 00 DB       ;[2P]	ltr bx
+0F 00 DC       ;[2P]	ltr sp
+0F 00 DD       ;[2P]	ltr bp
+0F 00 DE       ;[2P]	ltr si
+0F 00 DF       ;[2P]	ltr di
+0F 00 1E AA AA ;[2P]	ltr [+NN]
+0F 00 1F       ;[2P]	ltr [bx]
+0F 00 1C       ;[2P]	ltr [si]
+0F 00 1D       ;[2P]	ltr [di]
+0F 00 5F DD    ;[2P]	ltr [bx+NN]
+0F 00 5F DD    ;[2P]	ltr [bx+NN]
+0F 00 5E DD    ;[2P]	ltr [bp+NN]
+0F 00 5E DD    ;[2P]	ltr [bp+NN]
+0F 00 5C DD    ;[2P]	ltr [si+NN]
+0F 00 5C DD    ;[2P]	ltr [si+NN]
+0F 00 5D DD    ;[2P]	ltr [di+NN]
+0F 00 5D DD    ;[2P]	ltr [di+NN]
+0F 00 58 DD    ;[2P]	ltr [bx+si+NN]
+0F 00 58 DD    ;[2P]	ltr [bx+si+NN]
+0F 00 5A DD    ;[2P]	ltr [bp+si+NN]
+0F 00 5A DD    ;[2P]	ltr [bp+si+NN]
+0F 00 59 DD    ;[2P]	ltr [bx+di+NN]
+0F 00 59 DD    ;[2P]	ltr [bx+di+NN]
+0F 00 5B DD    ;[2P]	ltr [bp+di+NN]
+0F 00 5B DD    ;[2P]	ltr [bp+di+NN]
+               ; sgdt, , indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$01), FDS(size=word,sign=ignore), EAO(opcode=%000,ea_arg=0)
+0F 01 06 AA AA ;[2P]	sgdt [+NN]
+0F 01 07       ;[2P]	sgdt [bx]
+0F 01 04       ;[2P]	sgdt [si]
+0F 01 05       ;[2P]	sgdt [di]
+0F 01 47 DD    ;[2P]	sgdt [bx+NN]
+0F 01 47 DD    ;[2P]	sgdt [bx+NN]
+0F 01 46 DD    ;[2P]	sgdt [bp+NN]
+0F 01 46 DD    ;[2P]	sgdt [bp+NN]
+0F 01 44 DD    ;[2P]	sgdt [si+NN]
+0F 01 44 DD    ;[2P]	sgdt [si+NN]
+0F 01 45 DD    ;[2P]	sgdt [di+NN]
+0F 01 45 DD    ;[2P]	sgdt [di+NN]
+0F 01 40 DD    ;[2P]	sgdt [bx+si+NN]
+0F 01 40 DD    ;[2P]	sgdt [bx+si+NN]
+0F 01 42 DD    ;[2P]	sgdt [bp+si+NN]
+0F 01 42 DD    ;[2P]	sgdt [bp+si+NN]
+0F 01 41 DD    ;[2P]	sgdt [bx+di+NN]
+0F 01 41 DD    ;[2P]	sgdt [bx+di+NN]
+0F 01 43 DD    ;[2P]	sgdt [bp+di+NN]
+0F 01 43 DD    ;[2P]	sgdt [bp+di+NN]
+               ; sidt, , indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$01), FDS(size=word,sign=ignore), EAO(opcode=%001,ea_arg=0)
+0F 01 0E AA AA ;[2P]	sidt [+NN]
+0F 01 0F       ;[2P]	sidt [bx]
+0F 01 0C       ;[2P]	sidt [si]
+0F 01 0D       ;[2P]	sidt [di]
+0F 01 4F DD    ;[2P]	sidt [bx+NN]
+0F 01 4F DD    ;[2P]	sidt [bx+NN]
+0F 01 4E DD    ;[2P]	sidt [bp+NN]
+0F 01 4E DD    ;[2P]	sidt [bp+NN]
+0F 01 4C DD    ;[2P]	sidt [si+NN]
+0F 01 4C DD    ;[2P]	sidt [si+NN]
+0F 01 4D DD    ;[2P]	sidt [di+NN]
+0F 01 4D DD    ;[2P]	sidt [di+NN]
+0F 01 48 DD    ;[2P]	sidt [bx+si+NN]
+0F 01 48 DD    ;[2P]	sidt [bx+si+NN]
+0F 01 4A DD    ;[2P]	sidt [bp+si+NN]
+0F 01 4A DD    ;[2P]	sidt [bp+si+NN]
+0F 01 49 DD    ;[2P]	sidt [bx+di+NN]
+0F 01 49 DD    ;[2P]	sidt [bx+di+NN]
+0F 01 4B DD    ;[2P]	sidt [bp+di+NN]
+0F 01 4B DD    ;[2P]	sidt [bp+di+NN]
+               ; sldt, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$00), FDS(size=word,sign=ignore), EAO(opcode=%000,ea_arg=0)
+0F 00 C0       ;[2P]	sldt ax
+0F 00 C1       ;[2P]	sldt cx
+0F 00 C2       ;[2P]	sldt dx
+0F 00 C3       ;[2P]	sldt bx
+0F 00 C4       ;[2P]	sldt sp
+0F 00 C5       ;[2P]	sldt bp
+0F 00 C6       ;[2P]	sldt si
+0F 00 C7       ;[2P]	sldt di
+0F 00 06 AA AA ;[2P]	sldt [+NN]
+0F 00 07       ;[2P]	sldt [bx]
+0F 00 04       ;[2P]	sldt [si]
+0F 00 05       ;[2P]	sldt [di]
+0F 00 47 DD    ;[2P]	sldt [bx+NN]
+0F 00 47 DD    ;[2P]	sldt [bx+NN]
+0F 00 46 DD    ;[2P]	sldt [bp+NN]
+0F 00 46 DD    ;[2P]	sldt [bp+NN]
+0F 00 44 DD    ;[2P]	sldt [si+NN]
+0F 00 44 DD    ;[2P]	sldt [si+NN]
+0F 00 45 DD    ;[2P]	sldt [di+NN]
+0F 00 45 DD    ;[2P]	sldt [di+NN]
+0F 00 40 DD    ;[2P]	sldt [bx+si+NN]
+0F 00 40 DD    ;[2P]	sldt [bx+si+NN]
+0F 00 42 DD    ;[2P]	sldt [bp+si+NN]
+0F 00 42 DD    ;[2P]	sldt [bp+si+NN]
+0F 00 41 DD    ;[2P]	sldt [bx+di+NN]
+0F 00 41 DD    ;[2P]	sldt [bx+di+NN]
+0F 00 43 DD    ;[2P]	sldt [bp+di+NN]
+0F 00 43 DD    ;[2P]	sldt [bp+di+NN]
+               ; smsw, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$01), FDS(size=word,sign=ignore), EAO(opcode=%100,ea_arg=0)
+0F 01 E0       ;[2P]	smsw ax
+0F 01 E1       ;[2P]	smsw cx
+0F 01 E2       ;[2P]	smsw dx
+0F 01 E3       ;[2P]	smsw bx
+0F 01 E4       ;[2P]	smsw sp
+0F 01 E5       ;[2P]	smsw bp
+0F 01 E6       ;[2P]	smsw si
+0F 01 E7       ;[2P]	smsw di
+0F 01 26 AA AA ;[2P]	smsw [+NN]
+0F 01 27       ;[2P]	smsw [bx]
+0F 01 24       ;[2P]	smsw [si]
+0F 01 25       ;[2P]	smsw [di]
+0F 01 67 DD    ;[2P]	smsw [bx+NN]
+0F 01 67 DD    ;[2P]	smsw [bx+NN]
+0F 01 66 DD    ;[2P]	smsw [bp+NN]
+0F 01 66 DD    ;[2P]	smsw [bp+NN]
+0F 01 64 DD    ;[2P]	smsw [si+NN]
+0F 01 64 DD    ;[2P]	smsw [si+NN]
+0F 01 65 DD    ;[2P]	smsw [di+NN]
+0F 01 65 DD    ;[2P]	smsw [di+NN]
+0F 01 60 DD    ;[2P]	smsw [bx+si+NN]
+0F 01 60 DD    ;[2P]	smsw [bx+si+NN]
+0F 01 62 DD    ;[2P]	smsw [bp+si+NN]
+0F 01 62 DD    ;[2P]	smsw [bp+si+NN]
+0F 01 61 DD    ;[2P]	smsw [bx+di+NN]
+0F 01 61 DD    ;[2P]	smsw [bx+di+NN]
+0F 01 63 DD    ;[2P]	smsw [bp+di+NN]
+0F 01 63 DD    ;[2P]	smsw [bp+di+NN]
+               ; str, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$00), FDS(size=word,sign=ignore), EAO(opcode=%001,ea_arg=0)
+0F 00 C8       ;[2P]	str ax
+0F 00 C9       ;[2P]	str cx
+0F 00 CA       ;[2P]	str dx
+0F 00 CB       ;[2P]	str bx
+0F 00 CC       ;[2P]	str sp
+0F 00 CD       ;[2P]	str bp
+0F 00 CE       ;[2P]	str si
+0F 00 CF       ;[2P]	str di
+0F 00 0E AA AA ;[2P]	str [+NN]
+0F 00 0F       ;[2P]	str [bx]
+0F 00 0C       ;[2P]	str [si]
+0F 00 0D       ;[2P]	str [di]
+0F 00 4F DD    ;[2P]	str [bx+NN]
+0F 00 4F DD    ;[2P]	str [bx+NN]
+0F 00 4E DD    ;[2P]	str [bp+NN]
+0F 00 4E DD    ;[2P]	str [bp+NN]
+0F 00 4C DD    ;[2P]	str [si+NN]
+0F 00 4C DD    ;[2P]	str [si+NN]
+0F 00 4D DD    ;[2P]	str [di+NN]
+0F 00 4D DD    ;[2P]	str [di+NN]
+0F 00 48 DD    ;[2P]	str [bx+si+NN]
+0F 00 48 DD    ;[2P]	str [bx+si+NN]
+0F 00 4A DD    ;[2P]	str [bp+si+NN]
+0F 00 4A DD    ;[2P]	str [bp+si+NN]
+0F 00 49 DD    ;[2P]	str [bx+di+NN]
+0F 00 49 DD    ;[2P]	str [bx+di+NN]
+0F 00 4B DD    ;[2P]	str [bp+di+NN]
+0F 00 4B DD    ;[2P]	str [bp+di+NN]
+               ; verr, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$00), FDS(size=word,sign=ignore), EAO(opcode=%100,ea_arg=0)
+0F 00 E0       ;[2P]	verr ax
+0F 00 E1       ;[2P]	verr cx
+0F 00 E2       ;[2P]	verr dx
+0F 00 E3       ;[2P]	verr bx
+0F 00 E4       ;[2P]	verr sp
+0F 00 E5       ;[2P]	verr bp
+0F 00 E6       ;[2P]	verr si
+0F 00 E7       ;[2P]	verr di
+0F 00 26 AA AA ;[2P]	verr [+NN]
+0F 00 27       ;[2P]	verr [bx]
+0F 00 24       ;[2P]	verr [si]
+0F 00 25       ;[2P]	verr [di]
+0F 00 67 DD    ;[2P]	verr [bx+NN]
+0F 00 67 DD    ;[2P]	verr [bx+NN]
+0F 00 66 DD    ;[2P]	verr [bp+NN]
+0F 00 66 DD    ;[2P]	verr [bp+NN]
+0F 00 64 DD    ;[2P]	verr [si+NN]
+0F 00 64 DD    ;[2P]	verr [si+NN]
+0F 00 65 DD    ;[2P]	verr [di+NN]
+0F 00 65 DD    ;[2P]	verr [di+NN]
+0F 00 60 DD    ;[2P]	verr [bx+si+NN]
+0F 00 60 DD    ;[2P]	verr [bx+si+NN]
+0F 00 62 DD    ;[2P]	verr [bp+si+NN]
+0F 00 62 DD    ;[2P]	verr [bp+si+NN]
+0F 00 61 DD    ;[2P]	verr [bx+di+NN]
+0F 00 61 DD    ;[2P]	verr [bx+di+NN]
+0F 00 63 DD    ;[2P]	verr [bp+di+NN]
+0F 00 63 DD    ;[2P]	verr [bp+di+NN]
+               ; verw, , word_acc|word_reg|indirect|pointer_reg|base_disp|index_disp|base_index_disp, SB(val=$0F), SB(val=$00), FDS(size=word,sign=ignore), EAO(opcode=%101,ea_arg=0)
+0F 00 E8       ;[2P]	verw ax
+0F 00 E9       ;[2P]	verw cx
+0F 00 EA       ;[2P]	verw dx
+0F 00 EB       ;[2P]	verw bx
+0F 00 EC       ;[2P]	verw sp
+0F 00 ED       ;[2P]	verw bp
+0F 00 EE       ;[2P]	verw si
+0F 00 EF       ;[2P]	verw di
+0F 00 2E AA AA ;[2P]	verw [+NN]
+0F 00 2F       ;[2P]	verw [bx]
+0F 00 2C       ;[2P]	verw [si]
+0F 00 2D       ;[2P]	verw [di]
+0F 00 6F DD    ;[2P]	verw [bx+NN]
+0F 00 6F DD    ;[2P]	verw [bx+NN]
+0F 00 6E DD    ;[2P]	verw [bp+NN]
+0F 00 6E DD    ;[2P]	verw [bp+NN]
+0F 00 6C DD    ;[2P]	verw [si+NN]
+0F 00 6C DD    ;[2P]	verw [si+NN]
+0F 00 6D DD    ;[2P]	verw [di+NN]
+0F 00 6D DD    ;[2P]	verw [di+NN]
+0F 00 68 DD    ;[2P]	verw [bx+si+NN]
+0F 00 68 DD    ;[2P]	verw [bx+si+NN]
+0F 00 6A DD    ;[2P]	verw [bp+si+NN]
+0F 00 6A DD    ;[2P]	verw [bp+si+NN]
+0F 00 69 DD    ;[2P]	verw [bx+di+NN]
+0F 00 69 DD    ;[2P]	verw [bx+di+NN]
+0F 00 6B DD    ;[2P]	verw [bp+di+NN]
+0F 00 6B DD    ;[2P]	verw [bp+di+NN]

@@ -50,6 +50,7 @@ static struct {
 	{ flag_486,	'4'	},
 	{ flag_abs,	'A'	},
 	{ flag_seg,	'S'	},
+	{ flag_priv,	'P'	},
 	{ flag_none,	EOS	}
 };
 

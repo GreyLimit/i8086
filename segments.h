@@ -69,13 +69,19 @@
 struct _segment_group;
 
 typedef enum {
-	segment_undefined_access	= 000,		/* Undefined */
-	segment_program_code		= 001,		/* Executable machine code */
-	segment_program_data		= 002,		/* Program defined data */
-	segment_variable_data		= 004,		/* Uninitialised data */
-	segment_read_only		= 010,		/* Is read only */
-	segment_read_write		= 020,		/* Is read/writable */
-	segment_no_access		= 040		/* Cannot be used */
+	segment_undefined_access	= 00000,		/* Undefined */
+	segment_program_code		= 00001,		/* Executable machine code */
+	segment_absolute_code		= 00002,		/* Code is position dependent */
+	segment_priviledged_code	= 00004,		/* Code can contain priviledged instrucitons */
+	segment_reserved_0010		= 00010,		/* Reserved for future development */
+	segment_reserved_0020		= 00020,
+	segment_reserved_0040		= 00040,
+	segment_reserved_0100		= 00100,
+	segment_static_data		= 00200,		/* Statically defined data */
+	segment_variable_data		= 00400,		/* Uninitialised data */
+	segment_read_only		= 01000,		/* Is read only */
+	segment_read_write		= 02000,		/* Is read/writable */
+	segment_no_access		= 04000			/* Cannot be used */
 } segment_access;
 
 typedef struct _segment_record {
