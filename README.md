@@ -26,7 +26,7 @@ The assembler contains the concepts of segments (associated with segment registe
 
 ## Objectives from here
 
-* Encode the missing 286 instructions.
+* Intel 286 instructions included, now need to bring in a level of "segment control" that allows the assembler to understand the intent and useable of segments and so perform verification between a segments defined role and the data/instructions placed into it.
 * Provide output to object files and executables.  While, at the moment, the contemporary Intel document on formats for these files is being used as a guide, this might not be the end point of this work.
 * Reduce the assemblers final executable footprint such that an operational version can be created with the bounds of a '.com' executable: 64 KBytes.  A key focus on achieveing this go will be the reduction of non-essential static string data (i.e. error messages) through replacement of numerical equivalents.
 
