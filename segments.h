@@ -69,19 +69,22 @@
 struct _segment_group;
 
 typedef enum {
-	segment_undefined_access	= 00000,		/* Undefined */
-	segment_program_code		= 00001,		/* Executable machine code */
-	segment_absolute_code		= 00002,		/* Code is position dependent */
-	segment_priviledged_code	= 00004,		/* Code can contain priviledged instrucitons */
-	segment_reserved_0010		= 00010,		/* Reserved for future development */
-	segment_reserved_0020		= 00020,
-	segment_reserved_0040		= 00040,
-	segment_reserved_0100		= 00100,
-	segment_static_data		= 00200,		/* Statically defined data */
-	segment_variable_data		= 00400,		/* Uninitialised data */
-	segment_read_only		= 01000,		/* Is read only */
-	segment_read_write		= 02000,		/* Is read/writable */
-	segment_no_access		= 04000			/* Cannot be used */
+	segment_undefined_access	= 000000,		/* Undefined */
+	segment_program_code		= 000001,		/* Executable machine code */
+	segment_absolute_code		= 000002,		/* Code is position dependent */
+	segment_relative_code		= 000004,		/* Code is relocatable */
+	segment_priviledged_code	= 000010,		/* Code can contain priviledged instrucitons */
+	segment_16_bit			= 000020,		/* Segment target 16-bit code */
+	segment_32_bit			= 000040,		/* Segment target 32-bit code */
+	segment_8086			= 000100,		/* Segment targets 8086/88 CPU */
+	segment_80186			= 000200,		/* Segment targets 80186/88 CPU */
+	segment_80286			= 000400,		/* Segment targets 80286 CPU */
+	segment_80386			= 001000,		/* Segment targets 80386 CPU */
+	segment_static_data		= 002000,		/* Statically defined data */
+	segment_variable_data		= 004000,		/* Uninitialised data */
+	segment_read_only		= 010000,		/* Is read only */
+	segment_read_write		= 020000,		/* Is read/writable */
+	segment_no_access		= 040000		/* Cannot be used */
 } segment_access;
 
 typedef struct _segment_record {
@@ -122,6 +125,23 @@ extern segment_group **tail_all_groups;
  *	segment registers point to the same paragraph page.
  */
 extern boolean reset_segments( void );
+
+/*
+ *	Convert a segment_access into a human readable buffer
+ */
+extern int convert_segment_access_to_text( segment_access flags, char *buffer, int max );
+
+/*
+ *	Provide a "segment flags" parsing routine.  To avoid loading
+ *	down the assembler with even more keywords the flags to a segment
+ *	will be parsed from the content of a string value.  This will
+ *	give the finer control of the flags format, meanings and names
+ *	to this module.
+ *
+ *	Returns true on success; flags is used to return the result.
+ *	Returns false on failure; error is used to point to the source of the problem.
+ */
+extern boolean parse_segment_access_flags( char *src, int len, segment_access *flags, char **error );
 
 #endif
 

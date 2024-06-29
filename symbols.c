@@ -173,9 +173,11 @@ const char *component_text( component comp ) {
 }
 
 /*
- *	Component identification routines..
+ *	keyword comparison routines (includes elected
+ *	option to ignore case).  Return match length
+ *	or 0 on failure.
  */
-static int match_all( char *test, char *target ) {
+int match_all( char *test, char *target ) {
 	int	l;
 	char	c;
 

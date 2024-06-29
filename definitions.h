@@ -52,6 +52,8 @@ typedef int32_t		integer;
 
 #define USCORE		'_'
 #define PERIOD		'.'
+#define COMMA		','
+#define BAR		'|'
 #define HASH		'#'
 #define DOLLAR		'$'
 #define AT		'@'

@@ -391,6 +391,11 @@ static boolean process_dir_group( id_record *label, int args, token_record **arg
 	segment_group	*gp;
 	int		i, j, pages;
 
+	ASSERT( label != NIL( id_record ));
+	ASSERT( args >= 0 );
+	ASSERT( arg != NIL( token_record * ));
+	ASSERT( len != NIL( int ));
+
 	if( label == NIL( id_record )) {
 		log_error( "GROUP definition requires a label" );
 		return( FALSE );
@@ -399,6 +404,10 @@ static boolean process_dir_group( id_record *label, int args, token_record **arg
 		log_error_s( "Redefinition of GROUP label", label->id );
 		return( FALSE );
 	}
+	if( label->type == class_unknown ) {
+		label->type = class_group;
+		label->var.group = NIL( segment_group );
+	}
 	/*
 	 *	Create the group if it didn't already exist.
 	 */
@@ -406,13 +415,12 @@ static boolean process_dir_group( id_record *label, int args, token_record **arg
 		/*
 		 *	We are creating a group from scratch.
 		 */
-		ASSERT( label->type == class_unknown );
-
 		gp = NEW( segment_group );
 		gp->name = label->id;
 		gp->page = 0;			/* Default Page for group */
 		gp->segments = NIL( segment_record );
 		gp->next = NIL( segment_group );
+		
 		*tail_all_groups = gp;
 		tail_all_groups = &( gp->next );
 
@@ -519,36 +527,29 @@ static boolean process_dir_group( id_record *label, int args, token_record **arg
  *
  *	To define a new segment:
  *
- * 	{name}	SEGMENT	{segment_reg}
+ * 	{name}	SEGMENT	{segment_reg}[,"segment options"]
  *
  * 	To return to an existing segment
  *
  *		SEGMENT	{name}
- *
- *	TODO:
- *		The segment code has the begininnings of support for
- *		defining the 'nature' of a segment (read-write, read-only,
- *		empty etc).  The current concept is that (to avoid the
- *		definition of even more keywords) a string follows the
- *		segment register and the content of the string offers
- *		the necessary extra information.  That being said, it's
- *		not /that/ /many/ new keywords.
  */
 static boolean process_dir_segment( id_record *label, int args, token_record **arg, int *len ) {
 	register_data	*rd;
 	segment_record	*sp;
+	segment_access	sa;
 
-	if( args != 1 ) {
-		log_error( "SEGMENT requires a single argument" );
-		return( FALSE );
-	}
-	if( len[ 0 ] != 1 ) {
-		log_error( "SEGMENT invalid argument size" );
-		return( FALSE );
-	}
 	if( label ) {
+		if(( args < 1 )||( args > 2 )) {
+			log_error( "Defining a SEGMENT requires one or two arguments" );
+			return( FALSE );
+		}
+		if(( len[ 0 ] != 1 )||(( args == 2 )&&( len[ 1 ] != 1 ))) {
+			log_error( "SEGMENT invalid argument size" );
+			return( FALSE );
+		}
+		
 		/*
-		 *	Defining a new segment.  The argument must be a
+		 *	Defining a new segment.  The first argument must be a
 		 *	segment register.
 		 */
 		if(( label->type != class_unknown )&&( label->type != class_segment )) {
@@ -556,14 +557,29 @@ static boolean process_dir_segment( id_record *label, int args, token_record **a
 			return( FALSE );
 		}
 		if((( rd = register_component( arg[ 0 ]->id )) == NIL( register_data )) || !BOOL( rd->ac & ac_segment_reg )) {
-			log_error( "SEGMENT expecting a segment register" );
+			log_error( "SEGMENT expecting a segment register as first argument" );
 			return( FALSE );
+		}
+		if( args == 2 ) {
+			char	*err;
+			
+			if( arg[ 1 ]->id != tok_string ) {
+				log_error( "SEGMENT second arg must be a string of flags" );
+				return( FALSE );
+			}
+			if( !parse_segment_access_flags( (char *)( arg[ 1 ]->var.block.ptr ), arg[ 1 ]->var.block.len, &sa, &err )) {
+				log_error_s( "SEGMENT error in flag string", err );
+				return( FALSE );
+			}
+		}
+		else {
+			sa = segment_undefined_access;
 		}
 		if( label->type == class_unknown ) {
 			sp = NEW( segment_record );
 			sp->name = label->id;
 			sp->seg_reg = rd->reg_no;
-			sp->access = segment_undefined_access;
+			sp->access = sa;
 			sp->fixed = FALSE;
 			sp->start = 0;
 			sp->posn = 0;
@@ -599,10 +615,19 @@ static boolean process_dir_segment( id_record *label, int args, token_record **a
 	else {
 		id_record	*ip;
 
+		if( args != 1 ) {
+			log_error( "Referencing a SEGMENT requires a segment name" );
+			return( FALSE );
+		}
+		if( len[ 0 ] != 1 ) {
+			log_error( "SEGMENT invalid argument size" );
+			return( FALSE );
+		}
 		if( arg[ 0 ]->id != tok_label ) {
 			log_error( "SEGMENT expecting segment name" );
 			return( FALSE );
 		}
+
 		ip = arg[ 0 ]->var.label;
 
 		ASSERT( ip != NIL( id_record ));

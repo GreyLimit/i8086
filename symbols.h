@@ -33,6 +33,14 @@
 extern const char *component_text( component comp );
 
 /*
+ *	keyword comparison routines (includes elected
+ *	option to ignore case).  Return match length
+ *	or 0 on failure.
+ */
+extern int match_all( char *test, char *target );
+
+
+/*
  *	Component identification routines..
  */
 extern int match_identifier( char *search );

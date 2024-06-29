@@ -1059,7 +1059,7 @@ boolean assemble_inst( opcode *inst, opcode_prefix prefs, ea_breakdown *arg, ins
 				ASSERT( BOOL( arg[ TER_ARG( e )].registers == 1 ));
 				ASSERT( BOOL( arg[ TER_ARG( e )].reg[ 0 ] != NIL( register_data )));
 
-				DPRINT(( "Test Register (Arg %d, Pass %d, Reg %d).\n", TER_ARG( w ), TER_PASS( w ), TER_REG( w )));
+				DPRINT(( "Test Register (Arg %d, Pass %d, Reg %d).\n", TER_ARG( e ), TER_PASS( e ), TER_REG( e )));
 
 				if( BOOL( arg[ TER_ARG( e )].reg[ 0 ]->reg_no == TER_REG( e )) != BOOL( TER_PASS( e ))) return( FALSE );
 				break;
