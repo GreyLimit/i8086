@@ -27,6 +27,4 @@ No support for object file creation (as input to a separate linker) or direct '.
 
 Perhaps a little late to point out the errors in the book "Programming the 8086 8088" (Sybex 1983).  They are numerous, confusing and caused much head scratching.  The genuine Intel documents are, naturally, more reliable if not as easy to comprehend.
 
-It is interesting to note that the Intel manual released for the 80186 adopted the Sybex manual layout, and that Sybex doesn't appear to released any further books on this subject.
-
-
+It is interesting to note that the Intel manual released for the 80186 adopted the Sybex manual layout.  I had previously *assumed* that since I had not seen any Sybex manuals for later Intel CPUs that they didn't exist.  How wrong I was, as an example "Programming the 80386, by John H Crawford and Patrick P Gelsinger" (Sybex 1987).  It would seem that I cannot easily acquire a PDF version of these books (so far).
