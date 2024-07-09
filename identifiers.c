@@ -130,15 +130,12 @@ id_record *find_label( char *label, boolean definition ) {
  *	as part of the verbose/debug output.
  */
 void dump_value( constant_value *v ) {
-
-#	define BUFFER_FOR_SCOPE 32
-
 	char	scope[ BUFFER_FOR_SCOPE ];
 
 	ASSERT( v != NIL( constant_value ));
 
 	if( v->segment ) printf( " %s:", v->segment->name );
-	scope[ convert_scope_to_text( v->scope, scope, BUFFER_FOR_SCOPE-1 )] = EOS;
+	scope[ convert_scope_to_text( FALSE, v->scope, scope, BUFFER_FOR_SCOPE-1 )] = EOS;
 	printf( " %d($%04x)%s", (int)v->value, (unsigned int)v->value, scope );
 }
 

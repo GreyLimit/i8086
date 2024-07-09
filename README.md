@@ -19,7 +19,7 @@ Comprehensive validation and testing that the assembler generates the correct ma
 
 As part of an effort to provide tooling to enable this verification work a '--dump-opcodes' option (enabled when compiled with VERIFICATION defined) has been undertaken.
 
-This has already highlighted a range of errors thus proving how valuable this coding effort has been.  The purpose of this options is to display all of the instructions which the assembler will recognise providing a direct input to an external validation mechanism.  When combined with the '--verbose' or '--very-verbose' options a more detailed and longer output can be generated.
+This has already highlighted a range of errors thus proving how valuable this coding effort has been.  The purpose of this option is to display all of the instructions which the assembler will recognise providing a direct input to an external validation mechanism.  When combined with the '--verbose' or '--very-verbose' options a more detailed and longer output can be generated.
 
 No support for object file creation (as input to a separate linker) or direct '.exe' creation has been coded so far.
 

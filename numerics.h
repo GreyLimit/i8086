@@ -67,7 +67,12 @@ typedef enum {
 	 */
 	scope_byte	= ( scope_ubyte | scope_sbyte ),
 	scope_word	= ( scope_ubyte | scope_sbyte | scope_uword | scope_sword ),
-	scope_number	= ( scope_byte | scope_word )
+	scope_number	= ( scope_byte | scope_word ),
+	/*
+	 *	specific sub scopes.
+	 */
+	scope_byte_only	= ( scope_ubyte | scope_sbyte ),
+	scope_word_only	= ( scope_uword | scope_sword )
 } value_scope;
 
 
@@ -81,7 +86,12 @@ extern boolean address_scope( value_scope s );
 /*
  *	Convert a scope into a human readable buffer
  */
-extern int convert_scope_to_text( value_scope scope, char *buffer, int max );
+extern int convert_scope_to_text( boolean simplified, value_scope scope, char *buffer, int max );
+
+/*
+ *	Suggested size of a buffer for scope conversions.
+ */
+#define BUFFER_FOR_SCOPE	32
 
 #endif
 

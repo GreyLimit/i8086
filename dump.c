@@ -319,7 +319,8 @@ static void display_instruction( boolean show_more, char *flags, component *mods
 		component	arg_mods[ MAXIMUM_MODIFIERS ];
 		boolean		has_imm,
 				has_ind,
-				has_far;
+				has_far,
+				add_add;
 		
 		if( i ) printf( ", " );
 		expand_modifier( arg[ i ].mod, arg_mods, MAXIMUM_MODIFIERS );
@@ -344,13 +345,27 @@ static void display_instruction( boolean show_more, char *flags, component *mods
 						ea_far_index_disp |
 						ea_far_base_index_disp ));
 
+		add_add = BOOL( arg[ i ].ea & (	ea_base_disp |		ea_far_base_disp |
+						ea_index_disp |		ea_far_index_disp |
+						ea_base_index_disp |	ea_far_base_index_disp ));
+
 		if( has_far ) printf( "far " );
 		if( has_ind ) printf( "[" );
 		for( j = 0; j < arg[ i ].registers; j++ ) {
 			if( j ) printf( "+" );
 			printf( "%s", component_text( arg[ i ].reg[ j ]->comp ));
 		}
-		if( has_imm ) printf( "+NN" );
+		if( has_imm ) {
+			char	s[ BUFFER_FOR_SCOPE ];
+			
+			s[ convert_scope_to_text( TRUE, arg[ i ].immediate_arg.scope, s, BUFFER_FOR_SCOPE-1 )] = EOS;
+			if( add_add ) {
+				printf( "+{%s}", s );
+			}
+			else {
+				printf( "{%s}", s );
+			}
+		}
 		if( has_ind ) printf( "]" );
 	}
 	printf( "\n" );
@@ -472,14 +487,14 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 					target->immediate_arg.segment = NIL( segment_record );
 					switch( state->step ) {
 						case 0: {
-							target->immediate_arg.value = 0x55;
-							target->immediate_arg.scope = scope_byte;
+							target->immediate_arg.value = 0x5;
+							target->immediate_arg.scope = scope_byte_only;
 							state->step++;
 							return( TRUE );
 						}
 						case 1: {
 							target->immediate_arg.value = 0x555;
-							target->immediate_arg.scope = scope_word;
+							target->immediate_arg.scope = scope_word_only;
 							state->step++;
 							return( TRUE );
 						}
@@ -497,16 +512,28 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				}
 				case ea_indirect:
 				case ea_far_indirect: {
-					if( state->step == 0 ) {
-						target->ea = state->pick;
-						target->mod = no_modifier;
-						target->registers = 0;
-						target->segment_override = UNKNOWN_SEG;
-						target->immediate_arg.value = 0xAAAA;
-						target->immediate_arg.scope = scope_address;
-						target->immediate_arg.segment = NIL( segment_record );
-						state->step++;
-						return( TRUE );
+					target->ea = state->pick;
+					target->registers = 0;
+					target->segment_override = UNKNOWN_SEG;
+					target->immediate_arg.value = 0xAAAA;
+					target->immediate_arg.scope = scope_address;
+					target->immediate_arg.segment = NIL( segment_record );
+					switch( state->step ) {
+						case 0: {
+							target->mod = no_modifier;
+							state->step++;
+							return( TRUE );
+						}
+						case 1: {
+							target->mod = byte_modifier | ptr_modifier;
+							state->step++;
+							return( TRUE );
+						}
+						case 2: {
+							target->mod = word_modifier | ptr_modifier;
+							state->step++;
+							return( TRUE );
+						}
 					}
 					break;
 				}
@@ -529,18 +556,34 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				case ea_base_disp:
 				case ea_far_base_disp: {
 					boolean	iw;
-					int	br;
+					int	md,
+						br;
 
-					iw = BOOL( state->step & 1 );
-					br = state->step >> 1;
-					while( br < BASE_REGISTERS ) {
+					br = state->step;
+					iw = BOOL( br & 1 );		br >>= 1;
+					md = br % 3;			br /= 3;
+					
+					if( br < BASE_REGISTERS ) {
 						target->ea = state->pick;
-						target->mod = no_modifier;
+						switch( md ) {
+							case 1: {
+								target->mod = byte_modifier | ptr_modifier;
+								break;
+							}
+							case 2: {
+								target->mod = word_modifier | ptr_modifier;
+								break;
+							}
+							default: {
+								target->mod = no_modifier;
+								break;
+							}
+						}
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( base_register[ br ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = iw? 0xDDDD: 0xDD;
-						target->immediate_arg.scope = iw? scope_word: scope_byte;
+						target->immediate_arg.scope = iw? scope_word_only: scope_byte_only;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
@@ -550,18 +593,34 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				case ea_index_disp:
 				case ea_far_index_disp: {
 					boolean	iw;
-					int	ir;
+					int	md,
+						ir;
 
-					iw = BOOL( state->step & 1 );
-					ir = state->step >> 1;
-					while( ir < INDEX_REGISTERS ) {
+					ir = state->step;
+					iw = BOOL( state->step & 1 );		ir >>= 1;
+					md = ir % 3;				ir /= 3;
+
+					if( ir < INDEX_REGISTERS ) {
 						target->ea = state->pick;
-						target->mod = no_modifier;
+						switch( md ) {
+							case 1: {
+								target->mod = byte_modifier | ptr_modifier;
+								break;
+							}
+							case 2: {
+								target->mod = word_modifier | ptr_modifier;
+								break;
+							}
+							default: {
+								target->mod = no_modifier;
+								break;
+							}
+						}
 						target->registers = 1;
 						target->reg[ 0 ] = register_component( index_register[ ir ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = iw? 0xDDDD: 0xDD;
-						target->immediate_arg.scope = iw? scope_word: scope_byte;
+						target->immediate_arg.scope = iw? scope_word_only: scope_byte_only;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
@@ -571,7 +630,8 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 				case ea_base_index_disp:
 				case ea_far_base_index_disp: {
 					boolean	iw;
-					int	br,
+					int	md,
+						br,
 						ir;
 
 					/*
@@ -583,17 +643,31 @@ static boolean next_ea_state( ea_state *state, ea_breakdown *target ) {
 					 */
 					ir = state->step;
 					iw = BOOL( ir & 1 );		ir >>= 1;
+					md = ir % 3;			ir /= 3;
 					br = ir % BASE_REGISTERS;	ir /= BASE_REGISTERS;
 
-					while( ir < INDEX_REGISTERS ) {
+					if( ir < INDEX_REGISTERS ) {
 						target->ea = state->pick;
-						target->mod = no_modifier;
+						switch( md ) {
+							case 1: {
+								target->mod = byte_modifier | ptr_modifier;
+								break;
+							}
+							case 2: {
+								target->mod = word_modifier | ptr_modifier;
+								break;
+							}
+							default: {
+								target->mod = no_modifier;
+								break;
+							}
+						}
 						target->registers = 2;
 						target->reg[ 0 ] = register_component( base_register[ br ]);
 						target->reg[ 1 ] = register_component( index_register[ ir ]);
 						target->segment_override = UNKNOWN_SEG;
 						target->immediate_arg.value = iw? 0xDDDD: 0xDD;
-						target->immediate_arg.scope = iw? scope_word: scope_byte;
+						target->immediate_arg.scope = iw? scope_word_only: scope_byte_only;
 						target->immediate_arg.segment = NIL( segment_record );
 						state->step++;
 						return( TRUE );
@@ -692,61 +766,6 @@ void dump_opcode_list( boolean show_more ) {
 				break;
 			}
 		}
-		/*
-		 * TODO:	The above tests (for 0,1 or 2 arguments) do not include any iteration
-		 *		through possible variations of the following elements:
-		 *
-		 * 		*	Segment over-rides (CS, DS, SS, ES)
-		 * 		*	argument Data sizing (byte ptr, word ptr, near far etc)
-		 *		*	whole instruction data sizing.
-		 *
-		 * ---------------------------------------------------------------------------------
-		 *
-		 *	boolean assemble_inst( op, no_prefix, ea_breakdown *arg, instruction *mc ) {}
-		 * 
-		 *	typedef struct _opcode {
-		 *		component		op;
-		 *		mnemonic_flags		flags;
-		 *		opcode_prefix		prefs;
-		 *		modifier		mods;
-		 *		byte			args;
-		 *		effective_address	arg[ MAX_OPCODE_ARGS ];
-		 *		int			encoded;
-		 *		word			encode[ MAX_OPCODE_ENCODING ];
-		 *	} opcode;
-		 * 
-		 *	typedef struct {
-		 *		effective_address	ea;			What has been found as a bitmap.
-		 *		modifier		mod;			Explicit modifiers specified.
-		 *		byte			registers;		Number of registers supplied
-		 *		register_data		*reg[ MAX_REGISTERS ];	Details about each each register.
-		 *		byte			segment_override;	Over-ride the default segment register.
-		 *		constant_value		immediate_arg;		Any numerical constant value
-		 *	} ea_breakdown;
-		 *
-		 *	typedef struct {
-		 *		component	comp;
-		 *		arg_component	ac;
-		 *		byte		reg_no,
-		 *				ptr_reg_no,
-		 *				base_index_reg_no,
-		 *				segment;
-		 *	} register_data;
-		 *
-		 *	typedef struct {
-		 *		opcode_prefix	prefixes;
-		 *		byte		coded,
-		 *				code[ MAX_CODE_BYTES ];
-		 *		boolean		segment_overriden,		TRUE when the segment prefix is necessary (actually different from default)
-		 *				byte_data,
-		 *				word_data,
-		 *				near_data,			Near and Far are used when fixed immediate
-		 *				far_data,			addresses in the CODE stack are implied
-		 *				signed_data,
-		 *				unsigned_data,
-		 *				reg_is_dest;
-		 *	} instruction;
-		 */
 	}
 }
 

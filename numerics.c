@@ -66,30 +66,49 @@ boolean address_scope( value_scope s ) {
  */
 typedef struct {
 	value_scope	scope;
+	boolean		simplified;
 	int		len;
 	char		*name;
 } scope_name;
 static scope_name scope_names[] = {
-	{ scope_ubyte,		6,	" ubyte"	},
-	{ scope_sbyte,		6,	" sbyte"	},
-	{ scope_uword,		6,	" uword"	},
-	{ scope_sword,		6,	" sword"	},
-	{ scope_address,	8,	" address"	},
-	{ scope_none,		0,	NIL( char )	}
+	//
+	//	Simplified coarse scoping.
+	//
+	{ scope_address,	TRUE,	7,	"address"	},
+	{ scope_word_only,	TRUE,	4,	"word"		},
+	{ scope_byte_only,	TRUE,	4,	"byte"		},
+	//
+	//	Fine detail scoping
+	//
+	{ scope_ubyte,		FALSE,	5,	"ubyte"		},
+	{ scope_sbyte,		FALSE,	5,	"sbyte"		},
+	{ scope_uword,		FALSE,	5,	"uword"		},
+	{ scope_sword,		FALSE,	5,	"sword"		},
+	{ scope_address,	FALSE,	7,	"address"	},
+	{ scope_none,		FALSE,	0,	NIL( char )	}
 };
 
-int convert_scope_to_text( value_scope scope, char *buffer, int max ) {
+int convert_scope_to_text( boolean simplified, value_scope scope, char *buffer, int max ) {
 	scope_name	*sp;
-	int		left;
+	int		left,
+			space;
 
 	left = max;
+	space = 0;
 	for( sp = scope_names; sp->scope != scope_none; sp++ ) {
-		if( BOOL( scope & sp->scope )) {
-			if( sp->len <= left ) {
-				memcpy( buffer, sp->name, sp->len );
-				left -= sp->len;
-				buffer += sp->len;
+		if(( simplified == sp->simplified )&& BOOL( scope & sp->scope )) {
+			if(( sp->len + space ) > left ) break;
+			if( space ) {
+				*buffer++ = SPACE;
+				left--;
 			}
+			else {
+				space = 1;
+			}
+			memcpy( buffer, sp->name, sp->len );
+			left -= sp->len;
+			buffer += sp->len;
+			if( simplified ) break;
 		}
 	}
 	return( max - left );
